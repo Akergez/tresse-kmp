@@ -38,4 +38,6 @@ interface TresseVault {
 expect class TresseSync(vault: TresseVault) {
     suspend fun perform(config: TresseConfig): TresseSyncResult
     suspend fun generateEncryptionKey(): String
+    suspend fun loadConfig(): TresseConfig?
+    suspend fun saveConfig(config: TresseConfig)
 }

@@ -22,6 +22,8 @@ actual class TresseSync actual constructor(private val vault: TresseVault) {
     }
 
     actual suspend fun generateEncryptionKey(): String = withContext(Dispatchers.Default) { generateKey() }
+    actual suspend fun loadConfig(): TresseConfig? = withContext(Dispatchers.IO) { TresseConfigFile.read(vault) }
+    actual suspend fun saveConfig(config: TresseConfig) = withContext(Dispatchers.IO) { TresseConfigFile.write(vault, config) }
 
     private fun configureNativeLibrary() {
         if (System.getProperty("uniffi.component.tresse_ffi.libraryOverride") != null) return
