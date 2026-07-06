@@ -1,0 +1,18 @@
+# Gradle output and local state
+.gradle/
+build/
+out/
+
+# Local machine configuration
+local.properties
+
+# IDE and OS files
+.idea/
+*.iml
+.DS_Store
+
+# Native build by-products
+*.dSYM/
+*.pdb
+*.ilk
+
