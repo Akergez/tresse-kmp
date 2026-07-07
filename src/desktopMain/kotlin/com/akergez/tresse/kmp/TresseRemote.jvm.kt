@@ -1,6 +1,5 @@
 package com.akergez.tresse.kmp
 
-import java.io.ByteArrayInputStream
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
@@ -200,20 +199,59 @@ private data class ListObjectsPage(
     val nextToken: String?,
 )
 
-/** Parse S3 XML with entity decoding; object listings must never be parsed by regex. */
+/** Parse the small, flat subset of S3 ListObjectsV2 XML without platform XML factories. */
 private fun parseListObjectsV2(xml: String): ListObjectsPage {
-    val document = javax.xml.parsers.DocumentBuilderFactory.newInstance().apply {
-        isNamespaceAware = false
-        setFeature("http://apache.org/xml/features/disallow-doctype-decl", true)
-    }.newDocumentBuilder().parse(ByteArrayInputStream(xml.encodeToByteArray()))
-    fun texts(tag: String) = document.getElementsByTagName(tag).let { nodes ->
-        (0 until nodes.length).map { nodes.item(it).textContent }
+    fun texts(tag: String): List<String> {
+        val open = "<$tag>"
+        val close = "</$tag>"
+        val values = mutableListOf<String>()
+        var from = 0
+        while (true) {
+            val start = xml.indexOf(open, from)
+            if (start < 0) break
+            val bodyStart = start + open.length
+            val end = xml.indexOf(close, bodyStart)
+            if (end < 0) break
+            values += xmlDecode(xml.substring(bodyStart, end))
+            from = end + close.length
+        }
+        return values
     }
     return ListObjectsPage(
         keys = texts("Key"),
         truncated = texts("IsTruncated").firstOrNull().equals("true", ignoreCase = true),
         nextToken = texts("NextContinuationToken").firstOrNull(),
     )
+}
+
+private fun xmlDecode(value: String): String = buildString(value.length) {
+    var index = 0
+    while (index < value.length) {
+        val amp = value.indexOf('&', index)
+        if (amp < 0) {
+            append(value.substring(index))
+            break
+        }
+        append(value.substring(index, amp))
+        val semi = value.indexOf(';', amp + 1)
+        if (semi < 0) {
+            append(value.substring(amp))
+            break
+        }
+        val entity = value.substring(amp + 1, semi)
+        val decoded = when (entity) {
+            "amp" -> '&'
+            "lt" -> '<'
+            "gt" -> '>'
+            "quot" -> '"'
+            "apos" -> '\''
+            else -> entity.toIntOrNull()?.toChar()
+                ?: entity.removePrefix("#x").takeIf { entity.startsWith("#x") }?.toIntOrNull(16)?.toChar()
+                ?: entity.removePrefix("#").takeIf { entity.startsWith("#") }?.toIntOrNull()?.toChar()
+        }
+        if (decoded == null) append('&').append(entity).append(';') else append(decoded)
+        index = semi + 1
+    }
 }
 
 private fun sha256(data: ByteArray): ByteArray = MessageDigest.getInstance("SHA-256").digest(data)
