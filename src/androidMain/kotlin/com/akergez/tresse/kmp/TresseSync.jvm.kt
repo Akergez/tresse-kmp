@@ -5,6 +5,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import uniffi.tresse_ffi.*
+import uniffi.tresse_ffi.forcePull as ffiForcePull
 
 actual class TresseSync actual constructor(private val vault: TresseVault) {
     actual suspend fun perform(config: TresseConfig, progress: TresseSyncProgress?): TresseSyncResult =
@@ -27,6 +28,28 @@ actual class TresseSync actual constructor(private val vault: TresseVault) {
                     pulled = outcome.pulled.toInt(),
                     changed = outcome.committed || outcome.pulled > 0u ||
                         outcome.restored > 0u || outcome.removed > 0u,
+                )
+            }
+        }
+
+    actual suspend fun forcePull(config: TresseConfig, progress: TresseSyncProgress?): TresseSyncResult =
+        mutex.withLock {
+            withContext(Dispatchers.IO) {
+                require(config.encryptionKey.isNotBlank()) { "Tresse encryption key is required" }
+                require(config.isComplete()) { "Tresse ${config.storageType} sync configuration is incomplete" }
+                val local = VaultObjectStore(vault)
+                val outcome = ffiForcePull(
+                    encryptionKeyB64 = config.encryptionKey,
+                    local = local,
+                    remote = CountingRemoteKv(remoteKvOf(config), progress),
+                    source = VaultSource(vault, config, progress),
+                    sink = VaultSink(vault, config, progress),
+                )
+                local.writeIndex(outcome.fileIndexJson)
+                TresseSyncResult(
+                    pushed = outcome.pushed.toInt(),
+                    pulled = outcome.pulled.toInt(),
+                    changed = outcome.pulled > 0u || outcome.restored > 0u || outcome.removed > 0u,
                 )
             }
         }

@@ -928,6 +928,8 @@ internal open class UniffiVTableCallbackInterfaceFfiVaultSource(
 
 
 
+
+
 // For large crates we prevent `MethodTooLargeException` (see #2340)
 // N.B. the name of the extension is very misleading, since it is 
 // rather `InterfaceTooLargeException`, caused by too many methods 
@@ -946,6 +948,8 @@ internal interface IntegrityCheckingUniffiLib : Library {
     fun uniffi_tresse_ffi_checksum_func_cas_sync(
 ): Short
 fun uniffi_tresse_ffi_checksum_func_commit_vault(
+): Short
+fun uniffi_tresse_ffi_checksum_func_force_pull(
 ): Short
 fun uniffi_tresse_ffi_checksum_func_generate_key(
 ): Short
@@ -1140,6 +1144,8 @@ fun uniffi_tresse_ffi_fn_func_cas_sync(`encryptionKeyB64`: RustBuffer.ByValue,`f
 ): RustBuffer.ByValue
 fun uniffi_tresse_ffi_fn_func_commit_vault(`entryJson`: RustBuffer.ByValue,`baseBytes`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
 ): RustBuffer.ByValue
+fun uniffi_tresse_ffi_fn_func_force_pull(`encryptionKeyB64`: RustBuffer.ByValue,`local`: Long,`remote`: Long,`source`: Long,`sink`: Long,uniffi_out_err: UniffiRustCallStatus, 
+): RustBuffer.ByValue
 fun uniffi_tresse_ffi_fn_func_generate_key(uniffi_out_err: UniffiRustCallStatus, 
 ): RustBuffer.ByValue
 fun uniffi_tresse_ffi_fn_func_list_flat_versions(`bytes`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
@@ -1286,6 +1292,9 @@ private fun uniffiCheckApiChecksums(lib: IntegrityCheckingUniffiLib) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_tresse_ffi_checksum_func_commit_vault() != 39954.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_tresse_ffi_checksum_func_force_pull() != 12734.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_tresse_ffi_checksum_func_generate_key() != 19531.toShort()) {
@@ -4573,6 +4582,24 @@ public object FfiConverterSequenceTypeFfiVaultFile: FfiConverterRustBuffer<List<
     uniffiRustCallWithError(TresseException) { _status ->
     UniffiLib.INSTANCE.uniffi_tresse_ffi_fn_func_commit_vault(
         FfiConverterString.lower(`entryJson`),FfiConverterOptionalByteArray.lower(`baseBytes`),_status)
+}
+    )
+    }
+    
+
+        /**
+         * Bootstrap a replica from the remote without committing local files first.
+         *
+         * This is intentionally pull-only: remote meta is discovered and fetched into
+         * local `.tresse`, missing content needed by the fetched latest tree is pulled,
+         * and then the vault is restored. No local snapshot is committed and nothing is
+         * pushed to the remote.
+         */
+    @Throws(TresseException::class) fun `forcePull`(`encryptionKeyB64`: kotlin.String, `local`: FfiObjectStore, `remote`: FfiRemoteKv, `source`: FfiVaultSource, `sink`: FfiRestoreSink): FfiSyncOutcome {
+            return FfiConverterTypeFfiSyncOutcome.lift(
+    uniffiRustCallWithError(TresseException) { _status ->
+    UniffiLib.INSTANCE.uniffi_tresse_ffi_fn_func_force_pull(
+        FfiConverterString.lower(`encryptionKeyB64`),FfiConverterTypeFfiObjectStore.lower(`local`),FfiConverterTypeFfiRemoteKv.lower(`remote`),FfiConverterTypeFfiVaultSource.lower(`source`),FfiConverterTypeFfiRestoreSink.lower(`sink`),_status)
 }
     )
     }

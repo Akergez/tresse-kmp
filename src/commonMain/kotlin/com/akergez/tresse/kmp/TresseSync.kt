@@ -96,6 +96,7 @@ interface TresseVault {
 
 expect class TresseSync(vault: TresseVault) {
     suspend fun perform(config: TresseConfig, progress: TresseSyncProgress? = null): TresseSyncResult
+    suspend fun forcePull(config: TresseConfig, progress: TresseSyncProgress? = null): TresseSyncResult
     suspend fun generateEncryptionKey(): String
     suspend fun loadConfig(): TresseConfig?
     suspend fun saveConfig(config: TresseConfig)
