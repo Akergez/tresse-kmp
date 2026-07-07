@@ -1,22 +1,23 @@
 val desktopNative = layout.buildDirectory.dir("generated/desktopNative")
+val tresseRoot = file(System.getenv("TRESSE_DIR") ?: "../tresse")
 
 val buildTresseDesktop by tasks.registering(Exec::class) {
-    workingDir(rootProject.file("tresse"))
+    workingDir(tresseRoot)
     commandLine("cargo", "build", "--release", "-p", "tresse-ffi")
     inputs.files(
-        fileTree(rootProject.file("tresse/tresse-ffi/src")),
-        fileTree(rootProject.file("tresse/tresse-lib/src")),
+        fileTree(tresseRoot.resolve("tresse-ffi/src")),
+        fileTree(tresseRoot.resolve("tresse-lib/src")),
     )
     outputs.files(
-        rootProject.file("tresse/target/release/libtresse_ffi.dylib"),
-        rootProject.file("tresse/target/release/libtresse_ffi.so"),
-        rootProject.file("tresse/target/release/tresse_ffi.dll"),
+        tresseRoot.resolve("target/release/libtresse_ffi.dylib"),
+        tresseRoot.resolve("target/release/libtresse_ffi.so"),
+        tresseRoot.resolve("target/release/tresse_ffi.dll"),
     )
 }
 
 val copyTresseDesktopNative by tasks.registering(Copy::class) {
     dependsOn(buildTresseDesktop)
-    from(rootProject.file("tresse/target/release")) {
+    from(tresseRoot.resolve("target/release")) {
         include("libtresse_ffi.dylib", "libtresse_ffi.so", "tresse_ffi.dll")
     }
     into(desktopNative.map { it.dir("native") })
@@ -24,6 +25,7 @@ val copyTresseDesktopNative by tasks.registering(Copy::class) {
 
 plugins {
     id("org.jetbrains.kotlin.multiplatform")
+    alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.library)
 }
 
@@ -35,6 +37,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+            implementation(libs.kotlinx.serialization)
         }
         val desktopMain by getting {
             resources.srcDir(desktopNative)
@@ -49,7 +52,7 @@ kotlin {
     android {
         namespace = "com.akergez.tresse.kmp"
         compileSdk = 36
-        defaultConfig { minSdk = 26 }
+        defaultConfig { minSdk = 24 }
     }
 }
 

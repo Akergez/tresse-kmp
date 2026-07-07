@@ -54,7 +54,8 @@ object TresseConfigFile {
             encryptionKey = value("remote.encryption_key"),
             storageType = if (value("remote.storage_type") == "s3") "s3" else "http",
             s3Endpoint = value("remote.s3_endpoint"),
-            s3Region = value("remote.s3_region").ifBlank { "us-east-1" },
+            // Left as stored; the S3 backend defaults a blank region at use-site.
+            s3Region = value("remote.s3_region"),
             s3Bucket = value("remote.s3_bucket"),
             s3AccessKeyId = value("remote.s3_access_key_id"),
             s3SecretAccessKey = value("remote.s3_secret_access_key"),
