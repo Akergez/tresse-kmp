@@ -6,6 +6,8 @@ variables:
   GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
   GRADLE_VERSION: "9.2.1"
   ANDROID_HOME: "$CI_PROJECT_DIR/.android-sdk"
+  ANDROID_NDK_VERSION: "27.0.12077973"
+  RUST_VERSION: "1.93.1"
   TRESSE_REPOSITORY_URL: "https://gitlab.com/ragusseven/tresse.git"
   TRESSE_REF: "ec36e3c50255148ed951a8463ae88968f266f03f"
 
@@ -22,12 +24,13 @@ cache:
 
 native:linux-x86_64:
   stage: native
-  image: rust:1.93-bookworm
+  image: rust:1.93.1-bookworm
   before_script:
     - apt-get update && apt-get install -y git
     - mkdir -p .deps
     - git clone "$TRESSE_REPOSITORY_URL" .deps/tresse
     - git -C .deps/tresse checkout "$TRESSE_REF"
+    - test "$(git -C .deps/tresse rev-parse HEAD)" = "$TRESSE_REF"
   script:
     - cargo build --manifest-path .deps/tresse/Cargo.toml --release -p tresse-ffi
     - mkdir -p .native/native/linux-x86_64
@@ -39,7 +42,7 @@ native:linux-x86_64:
 
 native:linux-aarch64:
   stage: native
-  image: rust:1.93-bookworm
+  image: rust:1.93.1-bookworm
   tags:
     - saas-linux-small-arm64
   before_script:
@@ -47,6 +50,7 @@ native:linux-aarch64:
     - mkdir -p .deps
     - git clone "$TRESSE_REPOSITORY_URL" .deps/tresse
     - git -C .deps/tresse checkout "$TRESSE_REF"
+    - test "$(git -C .deps/tresse rev-parse HEAD)" = "$TRESSE_REF"
   script:
     - cargo build --manifest-path .deps/tresse/Cargo.toml --release -p tresse-ffi
     - mkdir -p .native/native/linux-aarch64
@@ -64,7 +68,8 @@ native:macos-arm64:
     - mkdir -p .deps
     - git clone "$TRESSE_REPOSITORY_URL" .deps/tresse
     - git -C .deps/tresse checkout "$TRESSE_REF"
-    - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain 1.93.1
+    - test "$(git -C .deps/tresse rev-parse HEAD)" = "$TRESSE_REF"
+    - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain "$RUST_VERSION"
     - export PATH="$HOME/.cargo/bin:$PATH"
   script:
     - cargo build --manifest-path .deps/tresse/Cargo.toml --release -p tresse-ffi
@@ -73,6 +78,33 @@ native:macos-arm64:
   artifacts:
     paths:
       - .native/native/macos-aarch64/libtresse_ffi.dylib
+  <<: *release_rules
+
+native:android:
+  stage: native
+  image: rust:1.93.1-bookworm
+  before_script:
+    - apt-get update && apt-get install -y git wget unzip openjdk-17-jre-headless
+    - mkdir -p .deps "$ANDROID_HOME/cmdline-tools"
+    - git clone "$TRESSE_REPOSITORY_URL" .deps/tresse
+    - git -C .deps/tresse checkout "$TRESSE_REF"
+    - test "$(git -C .deps/tresse rev-parse HEAD)" = "$TRESSE_REF"
+    - wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O cmdline-tools.zip
+    - unzip -q cmdline-tools.zip -d "$ANDROID_HOME/cmdline-tools"
+    - mv "$ANDROID_HOME/cmdline-tools/cmdline-tools" "$ANDROID_HOME/cmdline-tools/latest"
+    - export PATH="$PATH:$ANDROID_HOME/cmdline-tools/latest/bin"
+    - yes | sdkmanager --licenses || true
+    - sdkmanager "ndk;$ANDROID_NDK_VERSION"
+    - rustup target add aarch64-linux-android armv7-linux-androideabi x86_64-linux-android
+    - cargo install cargo-ndk --version 4.1.2 --locked
+  script:
+    - export ANDROID_NDK_HOME="$ANDROID_HOME/ndk/$ANDROID_NDK_VERSION"
+    - cargo ndk --manifest-path .deps/tresse/tresse-ffi/Cargo.toml -t arm64-v8a -t armeabi-v7a -t x86_64 -o src/androidMain/jniLibs build --release -p tresse-ffi
+  artifacts:
+    paths:
+      - src/androidMain/jniLibs/arm64-v8a/libtresse_ffi.so
+      - src/androidMain/jniLibs/armeabi-v7a/libtresse_ffi.so
+      - src/androidMain/jniLibs/x86_64/libtresse_ffi.so
   <<: *release_rules
 
 publish:maven:
@@ -84,6 +116,8 @@ publish:maven:
     - job: native:linux-aarch64
       artifacts: true
     - job: native:macos-arm64
+      artifacts: true
+    - job: native:android
       artifacts: true
   before_script:
     - apt-get update && apt-get install -y wget unzip
@@ -105,5 +139,11 @@ publish:maven:
     - yes | sdkmanager --licenses || true
     - sdkmanager "platforms;android-36" "build-tools;36.0.0"
   script:
+    - test -f .native/native/linux-x86_64/libtresse_ffi.so
+    - test -f .native/native/linux-aarch64/libtresse_ffi.so
+    - test -f .native/native/macos-aarch64/libtresse_ffi.dylib
+    - test -f src/androidMain/jniLibs/arm64-v8a/libtresse_ffi.so
+    - test -f src/androidMain/jniLibs/armeabi-v7a/libtresse_ffi.so
+    - test -f src/androidMain/jniLibs/x86_64/libtresse_ffi.so
     - TRESSE_PREBUILT_NATIVE_DIR="$CI_PROJECT_DIR/.native" gradle --no-daemon publishKotlinMultiplatformPublicationToGitLabRepository publishAndroidReleasePublicationToGitLabRepository publishDesktopPublicationToGitLabRepository
   <<: *release_rules
