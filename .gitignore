@@ -1,7 +1,16 @@
 # Gradle output and local state
 .gradle/
+.gradle-dist/
+.android-sdk/
 build/
 out/
+
+# CI downloads a pinned Gradle distribution instead of using the wrapper
+gradle/
+gradlew
+gradlew.bat
+gradle.zip
+cmdline-tools.zip
 
 # Local machine configuration
 local.properties
@@ -15,4 +24,3 @@ local.properties
 *.dSYM/
 *.pdb
 *.ilk
-
