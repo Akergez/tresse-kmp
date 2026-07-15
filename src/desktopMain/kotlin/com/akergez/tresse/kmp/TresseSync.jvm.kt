@@ -66,11 +66,31 @@ actual class TresseSync actual constructor(private val vault: TresseVault) {
     private fun configureNativeLibrary() {
         if (System.getProperty("uniffi.component.tresse_ffi.libraryOverride") != null) return
         val mapped = System.mapLibraryName("tresse_ffi").replace(".jnilib", ".dylib")
-        val input = javaClass.getResourceAsStream("/native/$mapped") ?: error("Missing tresse native library: $mapped")
+        val platform = nativePlatform()
+        val resource = "/native/$platform/$mapped"
+        val input = javaClass.getResourceAsStream(resource)
+            ?: error("Missing tresse native library: $resource")
         val target = Files.createTempFile("tresse-ffi-", mapped.substringAfterLast('.', ".bin")).toFile()
         target.deleteOnExit()
         input.use { Files.copy(it, target.toPath(), StandardCopyOption.REPLACE_EXISTING) }
         System.setProperty("uniffi.component.tresse_ffi.libraryOverride", target.absolutePath)
+    }
+
+    private fun nativePlatform(): String {
+        val os = System.getProperty("os.name").lowercase()
+        val arch = System.getProperty("os.arch").lowercase()
+        val normalizedOs = when {
+            os.contains("mac") || os.contains("darwin") -> "macos"
+            os.contains("linux") -> "linux"
+            os.contains("win") -> "windows"
+            else -> error("Unsupported desktop OS: $os")
+        }
+        val normalizedArch = when (arch) {
+            "amd64", "x86_64" -> "x86_64"
+            "arm64", "aarch64" -> "aarch64"
+            else -> error("Unsupported desktop architecture: $arch")
+        }
+        return "$normalizedOs-$normalizedArch"
     }
 
     private companion object { val mutex = Mutex() }

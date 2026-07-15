@@ -1,10 +1,13 @@
 stages:
+  - native
   - publish
 
 variables:
   GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
   GRADLE_VERSION: "9.2.1"
   ANDROID_HOME: "$CI_PROJECT_DIR/.android-sdk"
+  TRESSE_REPOSITORY_URL: "https://gitlab.com/ragusseven/tresse.git"
+  TRESSE_REF: "ec36e3c50255148ed951a8463ae88968f266f03f"
 
 cache:
   key: "$CI_COMMIT_REF_SLUG"
@@ -13,9 +16,75 @@ cache:
     - .gradle-dist
     - .android-sdk
 
+.release_rules: &release_rules
+  rules:
+    - if: '$CI_COMMIT_TAG =~ /^v[0-9]+\.[0-9]+\.[0-9]+([.-].*)?$/'
+
+native:linux-x86_64:
+  stage: native
+  image: rust:1.93-bookworm
+  before_script:
+    - apt-get update && apt-get install -y git
+    - mkdir -p .deps
+    - git clone "$TRESSE_REPOSITORY_URL" .deps/tresse
+    - git -C .deps/tresse checkout "$TRESSE_REF"
+  script:
+    - cargo build --manifest-path .deps/tresse/Cargo.toml --release -p tresse-ffi
+    - mkdir -p .native/native/linux-x86_64
+    - cp .deps/tresse/target/release/libtresse_ffi.so .native/native/linux-x86_64/
+  artifacts:
+    paths:
+      - .native/native/linux-x86_64/libtresse_ffi.so
+  <<: *release_rules
+
+native:linux-aarch64:
+  stage: native
+  image: rust:1.93-bookworm
+  tags:
+    - saas-linux-small-arm64
+  before_script:
+    - apt-get update && apt-get install -y git
+    - mkdir -p .deps
+    - git clone "$TRESSE_REPOSITORY_URL" .deps/tresse
+    - git -C .deps/tresse checkout "$TRESSE_REF"
+  script:
+    - cargo build --manifest-path .deps/tresse/Cargo.toml --release -p tresse-ffi
+    - mkdir -p .native/native/linux-aarch64
+    - cp .deps/tresse/target/release/libtresse_ffi.so .native/native/linux-aarch64/
+  artifacts:
+    paths:
+      - .native/native/linux-aarch64/libtresse_ffi.so
+  <<: *release_rules
+
+native:macos-arm64:
+  stage: native
+  tags:
+    - saas-macos-large-m2pro
+  before_script:
+    - mkdir -p .deps
+    - git clone "$TRESSE_REPOSITORY_URL" .deps/tresse
+    - git -C .deps/tresse checkout "$TRESSE_REF"
+    - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain 1.93.1
+    - export PATH="$HOME/.cargo/bin:$PATH"
+  script:
+    - cargo build --manifest-path .deps/tresse/Cargo.toml --release -p tresse-ffi
+    - mkdir -p .native/native/macos-aarch64
+    - cp .deps/tresse/target/release/libtresse_ffi.dylib .native/native/macos-aarch64/
+  artifacts:
+    paths:
+      - .native/native/macos-aarch64/libtresse_ffi.dylib
+  <<: *release_rules
+
 publish:maven:
   stage: publish
   image: eclipse-temurin:21-jdk
+  needs:
+    - job: native:linux-x86_64
+      artifacts: true
+    - job: native:linux-aarch64
+      artifacts: true
+    - job: native:macos-arm64
+      artifacts: true
   before_script:
     - apt-get update && apt-get install -y wget unzip
     - |
@@ -36,6 +105,5 @@ publish:maven:
     - yes | sdkmanager --licenses || true
     - sdkmanager "platforms;android-36" "build-tools;36.0.0"
   script:
-    - gradle --no-daemon publishKotlinMultiplatformPublicationToGitLabRepository publishAndroidReleasePublicationToGitLabRepository
-  rules:
-    - if: '$CI_COMMIT_TAG =~ /^v[0-9]+\.[0-9]+\.[0-9]+([.-].*)?$/'
+    - TRESSE_PREBUILT_NATIVE_DIR="$CI_PROJECT_DIR/.native" gradle --no-daemon publishKotlinMultiplatformPublicationToGitLabRepository publishAndroidReleasePublicationToGitLabRepository publishDesktopPublicationToGitLabRepository
+  <<: *release_rules

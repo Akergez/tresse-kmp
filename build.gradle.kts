@@ -1,36 +1,16 @@
 import org.gradle.api.credentials.HttpHeaderCredentials
 import org.gradle.authentication.http.HttpHeaderAuthentication
 
-val desktopNative = layout.buildDirectory.dir("generated/desktopNative")
-val tresseRoot = file(System.getenv("TRESSE_DIR") ?: "../tresse")
+val desktopNativeResources = providers.environmentVariable("TRESSE_PREBUILT_NATIVE_DIR")
+    .orNull
+    ?.let(::file)
+    ?: layout.projectDirectory.dir("src/desktopMain/resources").asFile
 
 group = "com.akergez.tresse"
 version = providers.gradleProperty("tresseVersion")
     .orElse(providers.environmentVariable("CI_COMMIT_TAG").map { it.removePrefix("v") })
     .orElse("0.1.0-SNAPSHOT")
     .get()
-
-val buildTresseDesktop by tasks.registering(Exec::class) {
-    workingDir(tresseRoot)
-    commandLine("cargo", "build", "--release", "-p", "tresse-ffi")
-    inputs.files(
-        fileTree(tresseRoot.resolve("tresse-ffi/src")),
-        fileTree(tresseRoot.resolve("tresse-lib/src")),
-    )
-    outputs.files(
-        tresseRoot.resolve("target/release/libtresse_ffi.dylib"),
-        tresseRoot.resolve("target/release/libtresse_ffi.so"),
-        tresseRoot.resolve("target/release/tresse_ffi.dll"),
-    )
-}
-
-val copyTresseDesktopNative by tasks.registering(Copy::class) {
-    dependsOn(buildTresseDesktop)
-    from(tresseRoot.resolve("target/release")) {
-        include("libtresse_ffi.dylib", "libtresse_ffi.so", "tresse_ffi.dll")
-    }
-    into(desktopNative.map { it.dir("native") })
-}
 
 plugins {
     id("org.jetbrains.kotlin.multiplatform") version "2.3.20"
@@ -52,7 +32,7 @@ kotlin {
             implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.10.0")
         }
         val desktopMain by getting {
-            resources.srcDir(desktopNative)
+            resources.srcDir(desktopNativeResources)
             dependencies { implementation("net.java.dev.jna:jna:5.14.0") }
         }
         val androidMain by getting {
@@ -89,8 +69,4 @@ publishing {
             }
         }
     }
-}
-
-tasks.matching { it.name == "desktopProcessResources" }.configureEach {
-    dependsOn(copyTresseDesktopNative)
 }
