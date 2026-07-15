@@ -63,7 +63,7 @@ native:linux-aarch64:
 native:macos-arm64:
   stage: native
   tags:
-    - saas-macos-large-m2pro
+    - macos-arm64
   before_script:
     - mkdir -p .deps
     - git clone "$TRESSE_REPOSITORY_URL" .deps/tresse
