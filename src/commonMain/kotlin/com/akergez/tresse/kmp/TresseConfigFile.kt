@@ -26,6 +26,13 @@ object TresseConfigFile {
         appendLine("[ignore]")
         appendLine("patterns = [${config.ignorePatterns.joinToString(", ") { quote(it) }}]")
         appendLine()
+        appendLine("[languages]")
+        appendLine()
+        config.languages?.toSortedMap()?.forEach { (language, strategy) ->
+            appendLine("[languages.$language]")
+            appendLine("strategy = ${quote(strategy)}")
+            appendLine()
+        }
         appendLine("[remote]")
         appendLine("storage_type = ${quote(if (config.storageType == "s3") "s3" else "http")}")
         appendLine("url = ${quote(config.serverUrl)}")
@@ -42,6 +49,7 @@ object TresseConfigFile {
     fun parse(text: String): TresseConfig {
         val strings = mutableMapOf<String, String>()
         var ignores = emptyList<String>()
+        val languages = mutableMapOf<String, String>()
         var section = ""
         text.lineSequence().forEachIndexed { index, raw ->
             val line = stripComment(raw).trim()
@@ -55,7 +63,9 @@ object TresseConfigFile {
             val key = "$section.${line.substring(0, separator).trim()}"
             val value = line.substring(separator + 1).trim()
             if (key == "ignore.patterns") ignores = parseStringArray(value, index + 1)
-            else strings[key] = parseString(value, index + 1)
+            else if (section.startsWith("languages.") && line.substring(0, separator).trim() == "strategy") {
+                languages[section.removePrefix("languages.")] = parseString(value, index + 1)
+            } else strings[key] = parseString(value, index + 1)
         }
         fun value(key: String) = strings[key].orEmpty()
         return TresseConfig(
@@ -71,6 +81,7 @@ object TresseConfigFile {
             s3AccessKeyId = value("remote.s3_access_key_id"),
             s3SecretAccessKey = value("remote.s3_secret_access_key"),
             ignorePatterns = ignores,
+            languages = languages.takeIf { it.isNotEmpty() },
         )
     }
 

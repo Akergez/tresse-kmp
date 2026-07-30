@@ -28,6 +28,7 @@ data class TresseConfig(
     // No default patterns: what to ignore is host policy (e.g. an Obsidian vault
     // ignores `.obsidian`/`.git`). The engine only honors whatever the host supplies.
     val ignorePatterns: List<String> = emptyList(),
+    val languages: Map<String, String>? = null,
     val autoSyncEnabled: Boolean = true,
     val autoSyncIntervalMinutes: Long = 15,
     val autoSyncDebounceSeconds: Long = 10,
@@ -47,6 +48,23 @@ data class TresseConfig(
 data class TresseFile(val path: String, val size: Long, val modifiedAtMillis: Long)
 
 data class TresseSyncResult(val pushed: Int, val pulled: Int, val changed: Boolean)
+
+data class TresseParsingStrategy(
+    val id: String,
+    val description: String,
+    val recommended: Boolean,
+)
+
+data class TresseLanguage(
+    val id: String,
+    val description: String,
+    val extensions: List<String>,
+    val strategies: List<TresseParsingStrategy>,
+)
+
+expect object TresseCapabilities {
+    fun supportedLanguages(): List<TresseLanguage>
+}
 
 /**
  * Live progress of a running sync. The whole commit → sync → restore flow is one

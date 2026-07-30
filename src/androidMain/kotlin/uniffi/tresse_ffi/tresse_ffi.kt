@@ -930,6 +930,8 @@ internal open class UniffiVTableCallbackInterfaceFfiVaultSource(
 
 
 
+
+
 // For large crates we prevent `MethodTooLargeException` (see #2340)
 // N.B. the name of the extension is very misleading, since it is 
 // rather `InterfaceTooLargeException`, caused by too many methods 
@@ -964,6 +966,8 @@ fun uniffi_tresse_ffi_checksum_func_remote_blind(
 fun uniffi_tresse_ffi_checksum_func_remote_open(
 ): Short
 fun uniffi_tresse_ffi_checksum_func_remote_seal(
+): Short
+fun uniffi_tresse_ffi_checksum_func_supported_languages(
 ): Short
 fun uniffi_tresse_ffi_checksum_func_to_jdr(
 ): Short
@@ -1160,6 +1164,8 @@ fun uniffi_tresse_ffi_fn_func_remote_open(`keyB64`: RustBuffer.ByValue,`data`: R
 ): RustBuffer.ByValue
 fun uniffi_tresse_ffi_fn_func_remote_seal(`keyB64`: RustBuffer.ByValue,`data`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
 ): RustBuffer.ByValue
+fun uniffi_tresse_ffi_fn_func_supported_languages(uniffi_out_err: UniffiRustCallStatus, 
+): RustBuffer.ByValue
 fun uniffi_tresse_ffi_fn_func_to_jdr(`bytes`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
 ): RustBuffer.ByValue
 fun ffi_tresse_ffi_rustbuffer_alloc(`size`: Long,uniffi_out_err: UniffiRustCallStatus, 
@@ -1316,6 +1322,9 @@ private fun uniffiCheckApiChecksums(lib: IntegrityCheckingUniffiLib) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_tresse_ffi_checksum_func_remote_seal() != 24658.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_tresse_ffi_checksum_func_supported_languages() != 36076.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_tresse_ffi_checksum_func_to_jdr() != 47824.toShort()) {
@@ -3086,6 +3095,82 @@ public object FfiConverterTypeFfiCommitResult: FfiConverterRustBuffer<FfiCommitR
 
 
 
+data class FfiLanguageDescriptor (
+    var `id`: kotlin.String, 
+    var `description`: kotlin.String, 
+    var `extensions`: List<kotlin.String>, 
+    var `strategies`: List<FfiStrategyDescriptor>
+) {
+    
+    companion object
+}
+
+/**
+ * @suppress
+ */
+public object FfiConverterTypeFfiLanguageDescriptor: FfiConverterRustBuffer<FfiLanguageDescriptor> {
+    override fun read(buf: ByteBuffer): FfiLanguageDescriptor {
+        return FfiLanguageDescriptor(
+            FfiConverterString.read(buf),
+            FfiConverterString.read(buf),
+            FfiConverterSequenceString.read(buf),
+            FfiConverterSequenceTypeFfiStrategyDescriptor.read(buf),
+        )
+    }
+
+    override fun allocationSize(value: FfiLanguageDescriptor) = (
+            FfiConverterString.allocationSize(value.`id`) +
+            FfiConverterString.allocationSize(value.`description`) +
+            FfiConverterSequenceString.allocationSize(value.`extensions`) +
+            FfiConverterSequenceTypeFfiStrategyDescriptor.allocationSize(value.`strategies`)
+    )
+
+    override fun write(value: FfiLanguageDescriptor, buf: ByteBuffer) {
+            FfiConverterString.write(value.`id`, buf)
+            FfiConverterString.write(value.`description`, buf)
+            FfiConverterSequenceString.write(value.`extensions`, buf)
+            FfiConverterSequenceTypeFfiStrategyDescriptor.write(value.`strategies`, buf)
+    }
+}
+
+
+
+data class FfiStrategyDescriptor (
+    var `id`: kotlin.String, 
+    var `description`: kotlin.String, 
+    var `recommended`: kotlin.Boolean
+) {
+    
+    companion object
+}
+
+/**
+ * @suppress
+ */
+public object FfiConverterTypeFfiStrategyDescriptor: FfiConverterRustBuffer<FfiStrategyDescriptor> {
+    override fun read(buf: ByteBuffer): FfiStrategyDescriptor {
+        return FfiStrategyDescriptor(
+            FfiConverterString.read(buf),
+            FfiConverterString.read(buf),
+            FfiConverterBoolean.read(buf),
+        )
+    }
+
+    override fun allocationSize(value: FfiStrategyDescriptor) = (
+            FfiConverterString.allocationSize(value.`id`) +
+            FfiConverterString.allocationSize(value.`description`) +
+            FfiConverterBoolean.allocationSize(value.`recommended`)
+    )
+
+    override fun write(value: FfiStrategyDescriptor, buf: ByteBuffer) {
+            FfiConverterString.write(value.`id`, buf)
+            FfiConverterString.write(value.`description`, buf)
+            FfiConverterBoolean.write(value.`recommended`, buf)
+    }
+}
+
+
+
 /**
  * Result of one full [`cas_sync`] pass.
  */
@@ -4528,6 +4613,62 @@ public object FfiConverterSequenceByteArray: FfiConverterRustBuffer<List<kotlin.
 /**
  * @suppress
  */
+public object FfiConverterSequenceTypeFfiLanguageDescriptor: FfiConverterRustBuffer<List<FfiLanguageDescriptor>> {
+    override fun read(buf: ByteBuffer): List<FfiLanguageDescriptor> {
+        val len = buf.getInt()
+        return List<FfiLanguageDescriptor>(len) {
+            FfiConverterTypeFfiLanguageDescriptor.read(buf)
+        }
+    }
+
+    override fun allocationSize(value: List<FfiLanguageDescriptor>): ULong {
+        val sizeForLength = 4UL
+        val sizeForItems = value.map { FfiConverterTypeFfiLanguageDescriptor.allocationSize(it) }.sum()
+        return sizeForLength + sizeForItems
+    }
+
+    override fun write(value: List<FfiLanguageDescriptor>, buf: ByteBuffer) {
+        buf.putInt(value.size)
+        value.iterator().forEach {
+            FfiConverterTypeFfiLanguageDescriptor.write(it, buf)
+        }
+    }
+}
+
+
+
+
+/**
+ * @suppress
+ */
+public object FfiConverterSequenceTypeFfiStrategyDescriptor: FfiConverterRustBuffer<List<FfiStrategyDescriptor>> {
+    override fun read(buf: ByteBuffer): List<FfiStrategyDescriptor> {
+        val len = buf.getInt()
+        return List<FfiStrategyDescriptor>(len) {
+            FfiConverterTypeFfiStrategyDescriptor.read(buf)
+        }
+    }
+
+    override fun allocationSize(value: List<FfiStrategyDescriptor>): ULong {
+        val sizeForLength = 4UL
+        val sizeForItems = value.map { FfiConverterTypeFfiStrategyDescriptor.allocationSize(it) }.sum()
+        return sizeForLength + sizeForItems
+    }
+
+    override fun write(value: List<FfiStrategyDescriptor>, buf: ByteBuffer) {
+        buf.putInt(value.size)
+        value.iterator().forEach {
+            FfiConverterTypeFfiStrategyDescriptor.write(it, buf)
+        }
+    }
+}
+
+
+
+
+/**
+ * @suppress
+ */
 public object FfiConverterSequenceTypeFfiVaultFile: FfiConverterRustBuffer<List<FfiVaultFile>> {
     override fun read(buf: ByteBuffer): List<FfiVaultFile> {
         val len = buf.getInt()
@@ -4700,6 +4841,15 @@ public object FfiConverterSequenceTypeFfiVaultFile: FfiConverterRustBuffer<List<
     uniffiRustCallWithError(TresseException) { _status ->
     UniffiLib.INSTANCE.uniffi_tresse_ffi_fn_func_remote_seal(
         FfiConverterString.lower(`keyB64`),FfiConverterByteArray.lower(`data`),_status)
+}
+    )
+    }
+    
+ fun `supportedLanguages`(): List<FfiLanguageDescriptor> {
+            return FfiConverterSequenceTypeFfiLanguageDescriptor.lift(
+    uniffiRustCall() { _status ->
+    UniffiLib.INSTANCE.uniffi_tresse_ffi_fn_func_supported_languages(
+        _status)
 }
     )
     }

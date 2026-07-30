@@ -6,6 +6,7 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import uniffi.tresse_ffi.*
 import uniffi.tresse_ffi.forcePull as ffiForcePull
+import uniffi.tresse_ffi.supportedLanguages as ffiSupportedLanguages
 
 actual class TresseSync actual constructor(private val vault: TresseVault) {
     actual suspend fun perform(config: TresseConfig, progress: TresseSyncProgress?): TresseSyncResult =
@@ -61,5 +62,22 @@ actual class TresseSync actual constructor(private val vault: TresseVault) {
     private companion object {
         /** Serializes concurrent commit/sync/restore transactions. */
         val mutex = Mutex()
+    }
+}
+
+actual object TresseCapabilities {
+    actual fun supportedLanguages(): List<TresseLanguage> = ffiSupportedLanguages().map { language ->
+        TresseLanguage(
+            id = language.id,
+            description = language.description,
+            extensions = language.extensions,
+            strategies = language.strategies.map { strategy ->
+                TresseParsingStrategy(
+                    id = strategy.id,
+                    description = strategy.description,
+                    recommended = strategy.recommended,
+                )
+            },
+        )
     }
 }

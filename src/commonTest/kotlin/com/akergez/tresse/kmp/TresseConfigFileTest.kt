@@ -2,6 +2,7 @@ package com.akergez.tresse.kmp
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class TresseConfigFileTest {
     @Test
@@ -21,6 +22,8 @@ class TresseConfigFileTest {
             s3SecretAccessKey = "key\"with\\escapes",
             ignorePatterns = listOf(".git", "cache,old"),
         )
-        assertEquals(config, TresseConfigFile.parse(TresseConfigFile.serialize(config)))
+        val encoded = TresseConfigFile.serialize(config)
+        assertTrue("[languages]" in encoded)
+        assertEquals(config, TresseConfigFile.parse(encoded))
     }
 }

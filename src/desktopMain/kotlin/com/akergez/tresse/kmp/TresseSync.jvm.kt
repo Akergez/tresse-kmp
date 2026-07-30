@@ -7,6 +7,7 @@ import kotlinx.coroutines.withContext
 import uniffi.tresse_ffi.casSync
 import uniffi.tresse_ffi.forcePull as ffiForcePull
 import uniffi.tresse_ffi.generateKey
+import uniffi.tresse_ffi.supportedLanguages as ffiSupportedLanguages
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 
@@ -94,4 +95,21 @@ actual class TresseSync actual constructor(private val vault: TresseVault) {
     }
 
     private companion object { val mutex = Mutex() }
+}
+
+actual object TresseCapabilities {
+    actual fun supportedLanguages(): List<TresseLanguage> = ffiSupportedLanguages().map { language ->
+        TresseLanguage(
+            id = language.id,
+            description = language.description,
+            extensions = language.extensions,
+            strategies = language.strategies.map { strategy ->
+                TresseParsingStrategy(
+                    id = strategy.id,
+                    description = strategy.description,
+                    recommended = strategy.recommended,
+                )
+            },
+        )
+    }
 }
