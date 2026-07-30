@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
  * companion Obsidian plugin drive the SAME remote store, so the wire fields here
  * mirror the plugin's config exactly. The `autoSync*` fields are device-local
  * scheduling knobs: they are carried in the shareable config string but are
- * deliberately NOT written into the notes directory's shared `config.toml`
+ * deliberately NOT written into the notes directory's shared `tresse.toml`
  * (see [TresseConfigFile]); each device overlays its own from local storage.
  */
 @Serializable

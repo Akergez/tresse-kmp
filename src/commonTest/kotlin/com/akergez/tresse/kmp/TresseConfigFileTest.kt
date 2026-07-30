@@ -5,7 +5,12 @@ import kotlin.test.assertEquals
 
 class TresseConfigFileTest {
     @Test
-    fun configTomlRoundTrips() {
+    fun configPathIsAtProjectRoot() {
+        assertEquals("tresse.toml", TresseConfigFile.PATH)
+    }
+
+    @Test
+    fun tresseTomlRoundTrips() {
         val config = TresseConfig(
             repoId = "books",
             encryptionKey = "secret==",

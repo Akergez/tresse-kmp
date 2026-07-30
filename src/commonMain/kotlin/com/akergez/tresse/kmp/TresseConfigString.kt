@@ -5,7 +5,7 @@ import kotlinx.serialization.json.Json
 /**
  * Single entry point for turning user-supplied config text into a [TresseConfig].
  * Accepts either the shareable `tresse1:` string (see [TresseConfigShare]) or the
- * raw `config.toml` body (see [TresseConfigFile]) — the same dual form the companion
+ * raw `tresse.toml` body (see [TresseConfigFile]) — the same dual form the companion
  * plugin accepts, so a string exported anywhere can be pasted here.
  */
 object TresseConfigString {

@@ -11,6 +11,22 @@ import kotlin.test.assertNull
 
 class DirectoryVaultTest {
     @Test
+    fun configIsWrittenAsTrackedRootFile() {
+        val rootPath = createTempDirectory(prefix = "tresse-config-test-")
+        val root = File(rootPath.pathString)
+        try {
+            val vault = fileTresseVault(root)
+
+            TresseConfigFile.write(vault, TresseConfig(repoId = "notes"))
+
+            assertEquals("notes", TresseConfigFile.read(vault)?.repoId)
+            assertEquals(listOf("tresse.toml"), vault.listFiles().map { it.path })
+        } finally {
+            root.deleteRecursively()
+        }
+    }
+
+    @Test
     fun fileVaultRoundTripsAndPrunesInternalAndIgnoredTrees() {
         val rootPath = createTempDirectory(prefix = "tresse-vault-test-")
         val root = File(rootPath.pathString)

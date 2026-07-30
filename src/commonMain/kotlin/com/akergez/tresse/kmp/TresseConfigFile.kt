@@ -1,14 +1,25 @@
 package com.akergez.tresse.kmp
 
-/** Shared repository configuration stored next to CAS data. */
+/** Shared repository configuration stored at the project root. */
 object TresseConfigFile {
-    const val PATH = ".tresse/config.toml"
+    const val PATH = "tresse.toml"
+    private val LEGACY_PATHS = listOf(".tresse/config.toml", ".tresse.toml")
 
     fun read(vault: TresseVault): TresseConfig? =
-        vault.storeRead(PATH)?.decodeToString()?.let(::parse)
+        (readTrackedFile(vault, PATH) ?: LEGACY_PATHS.firstNotNullOfOrNull { legacy ->
+            if (legacy.startsWith(".tresse/")) vault.storeRead(legacy) else readTrackedFile(vault, legacy)
+        })
+            ?.decodeToString()
+            ?.let(::parse)
 
     fun write(vault: TresseVault, config: TresseConfig) {
-        vault.storeWrite(PATH, serialize(config).encodeToByteArray())
+        vault.writeText(PATH, serialize(config))
+    }
+
+    private fun readTrackedFile(vault: TresseVault, path: String): ByteArray? {
+        val file = vault.listFiles().firstOrNull { it.path == path } ?: return null
+        require(file.size <= Int.MAX_VALUE) { "Config file is too large: $path" }
+        return vault.read(path, 0, file.size.toInt())
     }
 
     fun serialize(config: TresseConfig): String = buildString {
