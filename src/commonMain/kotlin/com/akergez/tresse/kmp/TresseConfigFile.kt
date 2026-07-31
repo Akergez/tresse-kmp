@@ -1,19 +1,19 @@
 package com.akergez.tresse.kmp
 
-/** Shared repository configuration stored at the project root. */
+/** Shared repository configuration plus device-local remote configuration. */
 object TresseConfigFile {
     const val PATH = "tresse.toml"
-    private val LEGACY_PATHS = listOf(".tresse/config.toml", ".tresse.toml")
+    const val REMOTES_PATH = ".tresse/remotes.toml"
 
-    fun read(vault: TresseVault): TresseConfig? =
-        (readTrackedFile(vault, PATH) ?: LEGACY_PATHS.firstNotNullOfOrNull { legacy ->
-            if (legacy.startsWith(".tresse/")) vault.storeRead(legacy) else readTrackedFile(vault, legacy)
-        })
-            ?.decodeToString()
-            ?.let(::parse)
+    fun read(vault: TresseVault): TresseConfig? {
+        val shared = readTrackedFile(vault, PATH) ?: return null
+        val remotes = vault.storeRead(REMOTES_PATH)?.decodeToString().orEmpty()
+        return parse(shared.decodeToString(), remotes)
+    }
 
     fun write(vault: TresseVault, config: TresseConfig) {
         vault.writeText(PATH, serialize(config))
+        vault.storeWrite(REMOTES_PATH, serializeRemotes(config).encodeToByteArray())
     }
 
     private fun readTrackedFile(vault: TresseVault, path: String): ByteArray? {
@@ -33,7 +33,10 @@ object TresseConfigFile {
             appendLine("strategy = ${quote(strategy)}")
             appendLine()
         }
-        appendLine("[remote]")
+    }
+
+    fun serializeRemotes(config: TresseConfig): String = buildString {
+        appendLine("[[remotes.origin]]")
         appendLine("storage_type = ${quote(if (config.storageType == "s3") "s3" else "http")}")
         appendLine("url = ${quote(config.serverUrl)}")
         appendLine("token = ${quote(config.token)}")
@@ -46,14 +49,29 @@ object TresseConfigFile {
         appendLine("s3_secret_access_key = ${quote(config.s3SecretAccessKey)}")
     }
 
-    fun parse(text: String): TresseConfig {
+    fun parse(text: String, remotesText: String = ""): TresseConfig {
+        require(!Regex("""(?m)^\s*(?:\[remote]|\[\[remotes(?:\.[A-Za-z0-9_-]+)?]])\s*$""").containsMatchIn(text)) {
+            "remotes must be configured in .tresse/remotes.toml"
+        }
+        require(!Regex("""(?m)^\s*\[remote]\s*$""").containsMatchIn(remotesText)) {
+            "the legacy [remote] format is not supported"
+        }
         val strings = mutableMapOf<String, String>()
         var ignores = emptyList<String>()
         val languages = mutableMapOf<String, String>()
         var section = ""
-        text.lineSequence().forEachIndexed { index, raw ->
+        var remoteCount = 0
+        "$text\n$remotesText".lineSequence().forEachIndexed { index, raw ->
             val line = stripComment(raw).trim()
             if (line.isEmpty()) return@forEachIndexed
+            if (line.startsWith("[[") && line.endsWith("]]")) {
+                section = line.substring(2, line.length - 2)
+                require(!section.startsWith("remotes") || section == "remotes.origin") {
+                    "the only supported remote name is `origin`"
+                }
+                if (section == "remotes.origin") remoteCount += 1
+                return@forEachIndexed
+            }
             if (line.startsWith('[') && line.endsWith(']')) {
                 section = line.substring(1, line.length - 1)
                 return@forEachIndexed
@@ -67,19 +85,20 @@ object TresseConfigFile {
                 languages[section.removePrefix("languages.")] = parseString(value, index + 1)
             } else strings[key] = parseString(value, index + 1)
         }
+        require(remoteCount <= 1) { "only one remote named `origin` is supported" }
         fun value(key: String) = strings[key].orEmpty()
         return TresseConfig(
-            serverUrl = value("remote.url"),
-            repoId = value("remote.repo_id"),
-            token = value("remote.token"),
-            encryptionKey = value("remote.encryption_key"),
-            storageType = if (value("remote.storage_type") == "s3") "s3" else "http",
-            s3Endpoint = value("remote.s3_endpoint"),
+            serverUrl = value("remotes.origin.url"),
+            repoId = value("remotes.origin.repo_id"),
+            token = value("remotes.origin.token"),
+            encryptionKey = value("remotes.origin.encryption_key"),
+            storageType = if (value("remotes.origin.storage_type") == "s3") "s3" else "http",
+            s3Endpoint = value("remotes.origin.s3_endpoint"),
             // Left as stored; the S3 backend defaults a blank region at use-site.
-            s3Region = value("remote.s3_region"),
-            s3Bucket = value("remote.s3_bucket"),
-            s3AccessKeyId = value("remote.s3_access_key_id"),
-            s3SecretAccessKey = value("remote.s3_secret_access_key"),
+            s3Region = value("remotes.origin.s3_region"),
+            s3Bucket = value("remotes.origin.s3_bucket"),
+            s3AccessKeyId = value("remotes.origin.s3_access_key_id"),
+            s3SecretAccessKey = value("remotes.origin.s3_secret_access_key"),
             ignorePatterns = ignores,
             languages = languages.takeIf { it.isNotEmpty() },
         )

@@ -28,7 +28,7 @@ data class TresseConfig(
     // No default patterns: what to ignore is host policy (e.g. an Obsidian vault
     // ignores `.obsidian`/`.git`). The engine only honors whatever the host supplies.
     val ignorePatterns: List<String> = emptyList(),
-    val languages: Map<String, String>? = null,
+    val languages: Map<String, String>? = mapOf("markdown" to "tree-sitter"),
     val autoSyncEnabled: Boolean = true,
     val autoSyncIntervalMinutes: Long = 15,
     val autoSyncDebounceSeconds: Long = 10,

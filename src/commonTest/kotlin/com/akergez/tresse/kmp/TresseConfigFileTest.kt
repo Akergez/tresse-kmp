@@ -11,7 +11,7 @@ class TresseConfigFileTest {
     }
 
     @Test
-    fun tresseTomlRoundTrips() {
+    fun splitConfigRoundTrips() {
         val config = TresseConfig(
             repoId = "books",
             encryptionKey = "secret==",
@@ -22,8 +22,11 @@ class TresseConfigFileTest {
             s3SecretAccessKey = "key\"with\\escapes",
             ignorePatterns = listOf(".git", "cache,old"),
         )
-        val encoded = TresseConfigFile.serialize(config)
-        assertTrue("[languages]" in encoded)
-        assertEquals(config, TresseConfigFile.parse(encoded))
+        val shared = TresseConfigFile.serialize(config)
+        val remotes = TresseConfigFile.serializeRemotes(config)
+        assertTrue("[languages]" in shared)
+        assertTrue("[languages.markdown]" in shared)
+        assertTrue("[[remotes.origin]]" in remotes)
+        assertEquals(config, TresseConfigFile.parse(shared, remotes))
     }
 }
