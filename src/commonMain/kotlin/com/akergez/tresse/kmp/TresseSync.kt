@@ -25,8 +25,9 @@ data class TresseConfig(
     val s3Bucket: String = "",
     val s3AccessKeyId: String = "",
     val s3SecretAccessKey: String = "",
-    // No default patterns: what to ignore is host policy (e.g. an Obsidian vault
-    // ignores `.obsidian`/`.git`). The engine only honors whatever the host supplies.
+    // No default patterns: what to ignore is host policy (a notes app that keeps an
+    // Obsidian vault has to let `.obsidian` through, a plain one does not). The
+    // engine only honors whatever the host supplies.
     val ignorePatterns: List<String> = emptyList(),
     val languages: Map<String, String>? = mapOf("markdown" to "tree-sitter"),
     val autoSyncEnabled: Boolean = true,

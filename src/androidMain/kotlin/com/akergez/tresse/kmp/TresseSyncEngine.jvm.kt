@@ -7,14 +7,9 @@ import uniffi.tresse_ffi.FfiVaultFile
 import uniffi.tresse_ffi.FfiVaultSource
 import uniffi.tresse_ffi.TresseException
 
-/**
- * `.tresse` (the local CAS store) is always excluded — it is engine-internal, never
- * user content. Beyond that only the host-supplied [TresseConfig.ignorePatterns]
- * prune the snapshot; the engine imposes no other policy of its own.
- */
-internal fun ignored(path: String, config: TresseConfig): Boolean =
-    path == ".tresse" || path.startsWith(".tresse/") ||
-        config.ignorePatterns.any { it.isNotBlank() && (path == it || path.startsWith("$it/")) }
+/** Compile this transaction's ignore rules; see [TresseIgnore]. Owns a native handle. */
+internal fun ignoreRulesOf(config: TresseConfig): TresseIgnore =
+    TresseIgnore(config.ignorePatterns)
 
 /**
  * Text-vs-binary classification. MUST match the companion plugin's `TEXT_EXTENSIONS`
@@ -37,14 +32,16 @@ internal fun isTextPath(path: String): Boolean =
  */
 internal class VaultSource(
     private val vault: TresseVault,
-    private val config: TresseConfig,
+    private val ignore: TresseIgnore,
     private val progress: TresseSyncProgress?,
 ) : FfiVaultSource {
     private val files by lazy { vault.listFiles() }
 
     override fun listFiles(): List<FfiVaultFile> = try {
         files.asSequence()
-            .filterNot { ignored(it.path, config) }
+            // The list is flat — every entry is a file. The matcher walks each path's
+            // own ancestors, so an excluded directory takes its subtree with it.
+            .filterNot { ignore.isIgnored(it.path, false) }
             .distinctBy(TresseFile::path)
             .sortedBy(TresseFile::path)
             .map {
@@ -81,11 +78,11 @@ internal class VaultSource(
  */
 internal class VaultSink(
     private val vault: TresseVault,
-    private val config: TresseConfig,
+    private val ignore: TresseIgnore,
     private val progress: TresseSyncProgress?,
 ) : FfiRestoreSink {
     override fun writeText(path: String, content: String) {
-        if (ignored(path, config)) return
+        if (ignore.isIgnored(path, false)) return
         try {
             vault.writeText(path, content)
             progress?.reportApply()
@@ -95,7 +92,7 @@ internal class VaultSink(
     }
 
     override fun writeBinary(path: String, data: ByteArray) {
-        if (ignored(path, config)) return
+        if (ignore.isIgnored(path, false)) return
         try {
             vault.writeBinary(path, data)
             progress?.reportApply()
@@ -105,7 +102,7 @@ internal class VaultSink(
     }
 
     override fun remove(path: String) {
-        if (ignored(path, config)) return
+        if (ignore.isIgnored(path, false)) return
         runCatching { vault.delete(path) }
         progress?.reportApply()
     }

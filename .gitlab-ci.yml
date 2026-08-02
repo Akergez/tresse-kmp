@@ -9,7 +9,7 @@ variables:
   ANDROID_NDK_VERSION: "27.0.12077973"
   RUST_VERSION: "1.93.1"
   TRESSE_REPOSITORY_URL: "https://gitlab.com/ragusseven/tresse.git"
-  TRESSE_REF: "35d28d8c0e5d06e2383617dc299eb88222a8690e"
+  TRESSE_REF: "ff0977c87a105b89cbce1fdc7dd3a00095c9ac0a"
 
 cache:
   key: "$CI_COMMIT_REF_SLUG"
@@ -80,6 +80,30 @@ native:macos-arm64:
       - .native/native/macos-aarch64/libtresse_ffi.dylib
   <<: *release_rules
 
+# PowerShell runner, so the whole job reads differently from its POSIX siblings.
+# `before_script` and `script` share one shell, hence the single PATH assignment.
+# MSVC comes with the runner image; only rustup has to be fetched.
+native:windows-x86_64:
+  stage: native
+  tags:
+    - saas-windows-medium-amd64
+  before_script:
+    - git clone "$env:TRESSE_REPOSITORY_URL" .deps/tresse
+    - git -C .deps/tresse checkout "$env:TRESSE_REF"
+    - if ((git -C .deps/tresse rev-parse HEAD) -ne $env:TRESSE_REF) { throw "TRESSE_REF checkout mismatch" }
+    - Invoke-WebRequest -Uri https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe -OutFile rustup-init.exe
+    - .\rustup-init.exe -y --profile minimal --default-toolchain "$env:RUST_VERSION" --default-host x86_64-pc-windows-msvc
+    - $env:PATH = "$env:USERPROFILE\.cargo\bin;$env:PATH"
+  script:
+    - cargo build --manifest-path .deps/tresse/Cargo.toml --release -p tresse-ffi
+    - New-Item -ItemType Directory -Force -Path .native\native\windows-x86_64
+    # No `lib` prefix on Windows; `System.mapLibraryName` in TresseNative expects exactly this.
+    - Copy-Item .deps\tresse\target\release\tresse_ffi.dll .native\native\windows-x86_64\
+  artifacts:
+    paths:
+      - .native/native/windows-x86_64/tresse_ffi.dll
+  <<: *release_rules
+
 native:android:
   stage: native
   image: rust:1.93.1-bookworm
@@ -118,6 +142,8 @@ publish:maven:
       artifacts: true
     - job: native:macos-arm64
       artifacts: true
+    - job: native:windows-x86_64
+      artifacts: true
     - job: native:android
       artifacts: true
   before_script:
@@ -143,6 +169,7 @@ publish:maven:
     - test -f .native/native/linux-x86_64/libtresse_ffi.so
     - test -f .native/native/linux-aarch64/libtresse_ffi.so
     - test -f .native/native/macos-aarch64/libtresse_ffi.dylib
+    - test -f .native/native/windows-x86_64/tresse_ffi.dll
     - test -f src/androidMain/jniLibs/arm64-v8a/libtresse_ffi.so
     - test -f src/androidMain/jniLibs/armeabi-v7a/libtresse_ffi.so
     - test -f src/androidMain/jniLibs/x86_64/libtresse_ffi.so

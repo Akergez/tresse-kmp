@@ -15,14 +15,16 @@ actual class TresseSync actual constructor(private val vault: TresseVault) {
                 require(config.encryptionKey.isNotBlank()) { "Tresse encryption key is required" }
                 require(config.isComplete()) { "Tresse ${config.storageType} sync configuration is incomplete" }
                 val local = VaultObjectStore(vault)
-                val outcome = casSync(
-                    encryptionKeyB64 = config.encryptionKey,
-                    fileIndexJson = local.readIndex(),
-                    local = local,
-                    remote = CountingRemoteKv(remoteKvOf(config), progress),
-                    source = VaultSource(vault, config, progress),
-                    sink = VaultSink(vault, config, progress),
-                )
+                val outcome = ignoreRulesOf(config).use { ignore ->
+                    casSync(
+                        encryptionKeyB64 = config.encryptionKey,
+                        fileIndexJson = local.readIndex(),
+                        local = local,
+                        remote = CountingRemoteKv(remoteKvOf(config), progress),
+                        source = VaultSource(vault, ignore, progress),
+                        sink = VaultSink(vault, ignore, progress),
+                    )
+                }
                 local.writeIndex(outcome.fileIndexJson)
                 TresseSyncResult(
                     pushed = outcome.pushed.toInt(),
@@ -39,13 +41,15 @@ actual class TresseSync actual constructor(private val vault: TresseVault) {
                 require(config.encryptionKey.isNotBlank()) { "Tresse encryption key is required" }
                 require(config.isComplete()) { "Tresse ${config.storageType} sync configuration is incomplete" }
                 val local = VaultObjectStore(vault)
-                val outcome = ffiForcePull(
-                    encryptionKeyB64 = config.encryptionKey,
-                    local = local,
-                    remote = CountingRemoteKv(remoteKvOf(config), progress),
-                    source = VaultSource(vault, config, progress),
-                    sink = VaultSink(vault, config, progress),
-                )
+                val outcome = ignoreRulesOf(config).use { ignore ->
+                    ffiForcePull(
+                        encryptionKeyB64 = config.encryptionKey,
+                        local = local,
+                        remote = CountingRemoteKv(remoteKvOf(config), progress),
+                        source = VaultSource(vault, ignore, progress),
+                        sink = VaultSink(vault, ignore, progress),
+                    )
+                }
                 local.writeIndex(outcome.fileIndexJson)
                 TresseSyncResult(
                     pushed = outcome.pushed.toInt(),

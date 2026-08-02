@@ -890,48 +890,6 @@ internal open class UniffiVTableCallbackInterfaceFfiVaultSource(
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // For large crates we prevent `MethodTooLargeException` (see #2340)
 // N.B. the name of the extension is very misleading, since it is 
 // rather `InterfaceTooLargeException`, caused by too many methods 
@@ -949,17 +907,9 @@ internal interface IntegrityCheckingUniffiLib : Library {
     // Integrity check functions only
     fun uniffi_tresse_ffi_checksum_func_cas_sync(
 ): Short
-fun uniffi_tresse_ffi_checksum_func_commit_vault(
-): Short
 fun uniffi_tresse_ffi_checksum_func_force_pull(
 ): Short
 fun uniffi_tresse_ffi_checksum_func_generate_key(
-): Short
-fun uniffi_tresse_ffi_checksum_func_list_flat_versions(
-): Short
-fun uniffi_tresse_ffi_checksum_func_merge_all(
-): Short
-fun uniffi_tresse_ffi_checksum_func_plan_sync(
 ): Short
 fun uniffi_tresse_ffi_checksum_func_remote_blind(
 ): Short
@@ -971,39 +921,11 @@ fun uniffi_tresse_ffi_checksum_func_supported_languages(
 ): Short
 fun uniffi_tresse_ffi_checksum_func_to_jdr(
 ): Short
-fun uniffi_tresse_ffi_checksum_method_commitfirststepengine_is_done(
+fun uniffi_tresse_ffi_checksum_method_ffiignorerules_is_ignored(
 ): Short
-fun uniffi_tresse_ffi_checksum_method_commitfirststepengine_provide(
+fun uniffi_tresse_ffi_checksum_method_ffiignorerules_warnings(
 ): Short
-fun uniffi_tresse_ffi_checksum_method_commitfirststepengine_step(
-): Short
-fun uniffi_tresse_ffi_checksum_method_commitfirststepengine_version_id(
-): Short
-fun uniffi_tresse_ffi_checksum_method_commitstepengine_is_done(
-): Short
-fun uniffi_tresse_ffi_checksum_method_commitstepengine_outcome(
-): Short
-fun uniffi_tresse_ffi_checksum_method_commitstepengine_provide(
-): Short
-fun uniffi_tresse_ffi_checksum_method_commitstepengine_step(
-): Short
-fun uniffi_tresse_ffi_checksum_method_ffirestoreiterator_next_file(
-): Short
-fun uniffi_tresse_ffi_checksum_method_restorestepengine_is_done(
-): Short
-fun uniffi_tresse_ffi_checksum_method_restorestepengine_provide(
-): Short
-fun uniffi_tresse_ffi_checksum_method_restorestepengine_step(
-): Short
-fun uniffi_tresse_ffi_checksum_constructor_commitfirststepengine_new(
-): Short
-fun uniffi_tresse_ffi_checksum_constructor_commitstepengine_new(
-): Short
-fun uniffi_tresse_ffi_checksum_constructor_ffirestoreiterator_fromdiffs(
-): Short
-fun uniffi_tresse_ffi_checksum_constructor_ffirestoreiterator_frommerged(
-): Short
-fun uniffi_tresse_ffi_checksum_constructor_restorestepengine_new(
+fun uniffi_tresse_ffi_checksum_constructor_ffiignorerules_new(
 ): Short
 fun uniffi_tresse_ffi_checksum_method_ffiobjectstore_list(
 ): Short
@@ -1086,55 +1008,15 @@ internal interface UniffiLib : Library {
     }
 
     // FFI functions
-    fun uniffi_tresse_ffi_fn_clone_commitfirststepengine(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
+    fun uniffi_tresse_ffi_fn_clone_ffiignorerules(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
 ): Pointer
-fun uniffi_tresse_ffi_fn_free_commitfirststepengine(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
+fun uniffi_tresse_ffi_fn_free_ffiignorerules(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
 ): Unit
-fun uniffi_tresse_ffi_fn_constructor_commitfirststepengine_new(`skelJson`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+fun uniffi_tresse_ffi_fn_constructor_ffiignorerules_new(`patterns`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
 ): Pointer
-fun uniffi_tresse_ffi_fn_method_commitfirststepengine_is_done(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
+fun uniffi_tresse_ffi_fn_method_ffiignorerules_is_ignored(`ptr`: Pointer,`path`: RustBuffer.ByValue,`isDir`: Byte,uniffi_out_err: UniffiRustCallStatus, 
 ): Byte
-fun uniffi_tresse_ffi_fn_method_commitfirststepengine_provide(`ptr`: Pointer,`data`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
-): Unit
-fun uniffi_tresse_ffi_fn_method_commitfirststepengine_step(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
-fun uniffi_tresse_ffi_fn_method_commitfirststepengine_version_id(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
-fun uniffi_tresse_ffi_fn_clone_commitstepengine(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
-): Pointer
-fun uniffi_tresse_ffi_fn_free_commitstepengine(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
-): Unit
-fun uniffi_tresse_ffi_fn_constructor_commitstepengine_new(`nodeJson`: RustBuffer.ByValue,`skelJson`: RustBuffer.ByValue,`baseSize`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Pointer
-fun uniffi_tresse_ffi_fn_method_commitstepengine_is_done(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
-): Byte
-fun uniffi_tresse_ffi_fn_method_commitstepengine_outcome(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
-fun uniffi_tresse_ffi_fn_method_commitstepengine_provide(`ptr`: Pointer,`data`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
-): Unit
-fun uniffi_tresse_ffi_fn_method_commitstepengine_step(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
-fun uniffi_tresse_ffi_fn_clone_ffirestoreiterator(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
-): Pointer
-fun uniffi_tresse_ffi_fn_free_ffirestoreiterator(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
-): Unit
-fun uniffi_tresse_ffi_fn_constructor_ffirestoreiterator_fromdiffs(`diffs`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
-): Pointer
-fun uniffi_tresse_ffi_fn_constructor_ffirestoreiterator_frommerged(`merged`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
-): Pointer
-fun uniffi_tresse_ffi_fn_method_ffirestoreiterator_next_file(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
-fun uniffi_tresse_ffi_fn_clone_restorestepengine(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
-): Pointer
-fun uniffi_tresse_ffi_fn_free_restorestepengine(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
-): Unit
-fun uniffi_tresse_ffi_fn_constructor_restorestepengine_new(`baseSize`: Long,uniffi_out_err: UniffiRustCallStatus, 
-): Pointer
-fun uniffi_tresse_ffi_fn_method_restorestepengine_is_done(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
-): Byte
-fun uniffi_tresse_ffi_fn_method_restorestepengine_provide(`ptr`: Pointer,`data`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
-): Unit
-fun uniffi_tresse_ffi_fn_method_restorestepengine_step(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
+fun uniffi_tresse_ffi_fn_method_ffiignorerules_warnings(`ptr`: Pointer,uniffi_out_err: UniffiRustCallStatus, 
 ): RustBuffer.ByValue
 fun uniffi_tresse_ffi_fn_init_callback_vtable_ffiobjectstore(`vtable`: UniffiVTableCallbackInterfaceFfiObjectStore,
 ): Unit
@@ -1146,17 +1028,9 @@ fun uniffi_tresse_ffi_fn_init_callback_vtable_ffivaultsource(`vtable`: UniffiVTa
 ): Unit
 fun uniffi_tresse_ffi_fn_func_cas_sync(`encryptionKeyB64`: RustBuffer.ByValue,`fileIndexJson`: RustBuffer.ByValue,`local`: Long,`remote`: Long,`source`: Long,`sink`: Long,uniffi_out_err: UniffiRustCallStatus, 
 ): RustBuffer.ByValue
-fun uniffi_tresse_ffi_fn_func_commit_vault(`entryJson`: RustBuffer.ByValue,`baseBytes`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
 fun uniffi_tresse_ffi_fn_func_force_pull(`encryptionKeyB64`: RustBuffer.ByValue,`local`: Long,`remote`: Long,`source`: Long,`sink`: Long,uniffi_out_err: UniffiRustCallStatus, 
 ): RustBuffer.ByValue
 fun uniffi_tresse_ffi_fn_func_generate_key(uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
-fun uniffi_tresse_ffi_fn_func_list_flat_versions(`bytes`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
-fun uniffi_tresse_ffi_fn_func_merge_all(`diffs`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
-): RustBuffer.ByValue
-fun uniffi_tresse_ffi_fn_func_plan_sync(`localIds`: RustBuffer.ByValue,`remoteIds`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
 ): RustBuffer.ByValue
 fun uniffi_tresse_ffi_fn_func_remote_blind(`keyB64`: RustBuffer.ByValue,`objectId`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
 ): RustBuffer.ByValue
@@ -1297,22 +1171,10 @@ private fun uniffiCheckApiChecksums(lib: IntegrityCheckingUniffiLib) {
     if (lib.uniffi_tresse_ffi_checksum_func_cas_sync() != 44339.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_tresse_ffi_checksum_func_commit_vault() != 39954.toShort()) {
-        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    }
     if (lib.uniffi_tresse_ffi_checksum_func_force_pull() != 12734.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_tresse_ffi_checksum_func_generate_key() != 19531.toShort()) {
-        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    }
-    if (lib.uniffi_tresse_ffi_checksum_func_list_flat_versions() != 32743.toShort()) {
-        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    }
-    if (lib.uniffi_tresse_ffi_checksum_func_merge_all() != 27950.toShort()) {
-        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    }
-    if (lib.uniffi_tresse_ffi_checksum_func_plan_sync() != 57309.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_tresse_ffi_checksum_func_remote_blind() != 17389.toShort()) {
@@ -1330,55 +1192,13 @@ private fun uniffiCheckApiChecksums(lib: IntegrityCheckingUniffiLib) {
     if (lib.uniffi_tresse_ffi_checksum_func_to_jdr() != 47824.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_tresse_ffi_checksum_method_commitfirststepengine_is_done() != 33522.toShort()) {
+    if (lib.uniffi_tresse_ffi_checksum_method_ffiignorerules_is_ignored() != 15922.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_tresse_ffi_checksum_method_commitfirststepengine_provide() != 64733.toShort()) {
+    if (lib.uniffi_tresse_ffi_checksum_method_ffiignorerules_warnings() != 17819.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_tresse_ffi_checksum_method_commitfirststepengine_step() != 8321.toShort()) {
-        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    }
-    if (lib.uniffi_tresse_ffi_checksum_method_commitfirststepengine_version_id() != 55819.toShort()) {
-        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    }
-    if (lib.uniffi_tresse_ffi_checksum_method_commitstepengine_is_done() != 61261.toShort()) {
-        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    }
-    if (lib.uniffi_tresse_ffi_checksum_method_commitstepengine_outcome() != 47905.toShort()) {
-        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    }
-    if (lib.uniffi_tresse_ffi_checksum_method_commitstepengine_provide() != 9233.toShort()) {
-        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    }
-    if (lib.uniffi_tresse_ffi_checksum_method_commitstepengine_step() != 40317.toShort()) {
-        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    }
-    if (lib.uniffi_tresse_ffi_checksum_method_ffirestoreiterator_next_file() != 29598.toShort()) {
-        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    }
-    if (lib.uniffi_tresse_ffi_checksum_method_restorestepengine_is_done() != 51473.toShort()) {
-        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    }
-    if (lib.uniffi_tresse_ffi_checksum_method_restorestepengine_provide() != 16889.toShort()) {
-        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    }
-    if (lib.uniffi_tresse_ffi_checksum_method_restorestepengine_step() != 18045.toShort()) {
-        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    }
-    if (lib.uniffi_tresse_ffi_checksum_constructor_commitfirststepengine_new() != 30509.toShort()) {
-        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    }
-    if (lib.uniffi_tresse_ffi_checksum_constructor_commitstepengine_new() != 57540.toShort()) {
-        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    }
-    if (lib.uniffi_tresse_ffi_checksum_constructor_ffirestoreiterator_fromdiffs() != 30144.toShort()) {
-        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    }
-    if (lib.uniffi_tresse_ffi_checksum_constructor_ffirestoreiterator_frommerged() != 1225.toShort()) {
-        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    }
-    if (lib.uniffi_tresse_ffi_checksum_constructor_restorestepengine_new() != 61404.toShort()) {
+    if (lib.uniffi_tresse_ffi_checksum_constructor_ffiignorerules_new() != 16743.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_tresse_ffi_checksum_method_ffiobjectstore_list() != 4481.toShort()) {
@@ -1842,68 +1662,30 @@ public object FfiConverterByteArray: FfiConverterRustBuffer<ByteArray> {
 
 
 /**
- * Streaming first-commit engine (no base).
- *
- * Pulls file content one file at a time via `FfiStep::Fetch` and streams
- * the encoded delta to the output sink. Equivalent to `CommitFirstStepEngine`.
- *
- * ```kotlin
- * val engine = CommitFirstStepEngine(skelJson)
- * while (true) {
- * when (val s = engine.step()) {
- * is FfiStep.Fetch    -> engine.provide(readFile(s.path))
- * is FfiStep.Write    -> appendToOutput(s.bytes).also { engine.provide(byteArrayOf()) }
- * is FfiStep.OutRead  -> engine.provide(readOutput(s.from, s.to))
- * is FfiStep.OutReplace -> replaceOutput(s.from, s.bytes).also { engine.provide(byteArrayOf()) }
- * is FfiStep.OutPatch -> patchOutput(s.at, s.bytes).also { engine.provide(byteArrayOf()) }
- * is FfiStep.Done     -> break
- * is FfiStep.Err      -> throw Exception(s.message)
- * else -> error("unexpected step")
- * }
- * }
- * val versionId = engine.versionId()
- * ```
+ * Compiled ignore rules. Built once per config load and reused for every path
+ * of the scan — compiling per path would reparse the globs each time.
  */
-public interface CommitFirstStepEngineInterface {
-    
-    fun `isDone`(): kotlin.Boolean
-    
-    fun `provide`(`data`: kotlin.ByteArray)
-    
-    fun `step`(): FfiStep
+public interface FfiIgnoreRulesInterface {
     
     /**
-     * The new version ID, available once `step()` returned `Done`.
+     * `path` is vault-relative and slash-separated; `is_dir` selects rules
+     * written with a trailing slash.
      */
-    fun `versionId`(): kotlin.String?
+    fun `isIgnored`(`path`: kotlin.String, `isDir`: kotlin.Boolean): kotlin.Boolean
+    
+    /**
+     * Negations that can never fire because an ancestor is already excluded.
+     */
+    fun `warnings`(): List<kotlin.String>
     
     companion object
 }
 
 /**
- * Streaming first-commit engine (no base).
- *
- * Pulls file content one file at a time via `FfiStep::Fetch` and streams
- * the encoded delta to the output sink. Equivalent to `CommitFirstStepEngine`.
- *
- * ```kotlin
- * val engine = CommitFirstStepEngine(skelJson)
- * while (true) {
- * when (val s = engine.step()) {
- * is FfiStep.Fetch    -> engine.provide(readFile(s.path))
- * is FfiStep.Write    -> appendToOutput(s.bytes).also { engine.provide(byteArrayOf()) }
- * is FfiStep.OutRead  -> engine.provide(readOutput(s.from, s.to))
- * is FfiStep.OutReplace -> replaceOutput(s.from, s.bytes).also { engine.provide(byteArrayOf()) }
- * is FfiStep.OutPatch -> patchOutput(s.at, s.bytes).also { engine.provide(byteArrayOf()) }
- * is FfiStep.Done     -> break
- * is FfiStep.Err      -> throw Exception(s.message)
- * else -> error("unexpected step")
- * }
- * }
- * val versionId = engine.versionId()
- * ```
+ * Compiled ignore rules. Built once per config load and reused for every path
+ * of the scan — compiling per path would reparse the globs each time.
  */
-open class CommitFirstStepEngine: Disposable, AutoCloseable, CommitFirstStepEngineInterface
+open class FfiIgnoreRules: Disposable, AutoCloseable, FfiIgnoreRulesInterface
 {
 
     constructor(pointer: Pointer) {
@@ -1922,14 +1704,13 @@ open class CommitFirstStepEngine: Disposable, AutoCloseable, CommitFirstStepEngi
         this.cleanable = UniffiLib.CLEANER.register(this, UniffiCleanAction(pointer))
     }
     /**
-     * Create an engine. `skel_json` is a JSON-serialized `Skel` tree
-     * (`{"kind":"Dir"|"File"|"Binary","path":"...","children":[...]}`).
+     * Build from `tresse.toml`'s `ignore.patterns`, in declaration order.
      */
-    constructor(`skelJson`: kotlin.String) :
+    constructor(`patterns`: List<kotlin.String>) :
         this(
     uniffiRustCallWithError(TresseException) { _status ->
-    UniffiLib.INSTANCE.uniffi_tresse_ffi_fn_constructor_commitfirststepengine_new(
-        FfiConverterString.lower(`skelJson`),_status)
+    UniffiLib.INSTANCE.uniffi_tresse_ffi_fn_constructor_ffiignorerules_new(
+        FfiConverterSequenceString.lower(`patterns`),_status)
 }
     )
 
@@ -1984,7 +1765,7 @@ open class CommitFirstStepEngine: Disposable, AutoCloseable, CommitFirstStepEngi
         override fun run() {
             pointer?.let { ptr ->
                 uniffiRustCall { status ->
-                    UniffiLib.INSTANCE.uniffi_tresse_ffi_fn_free_commitfirststepengine(ptr, status)
+                    UniffiLib.INSTANCE.uniffi_tresse_ffi_fn_free_ffiignorerules(ptr, status)
                 }
             }
         }
@@ -1992,39 +1773,20 @@ open class CommitFirstStepEngine: Disposable, AutoCloseable, CommitFirstStepEngi
 
     fun uniffiClonePointer(): Pointer {
         return uniffiRustCall() { status ->
-            UniffiLib.INSTANCE.uniffi_tresse_ffi_fn_clone_commitfirststepengine(pointer!!, status)
+            UniffiLib.INSTANCE.uniffi_tresse_ffi_fn_clone_ffiignorerules(pointer!!, status)
         }
     }
 
-    override fun `isDone`(): kotlin.Boolean {
+    
+    /**
+     * `path` is vault-relative and slash-separated; `is_dir` selects rules
+     * written with a trailing slash.
+     */override fun `isIgnored`(`path`: kotlin.String, `isDir`: kotlin.Boolean): kotlin.Boolean {
             return FfiConverterBoolean.lift(
     callWithPointer {
     uniffiRustCall() { _status ->
-    UniffiLib.INSTANCE.uniffi_tresse_ffi_fn_method_commitfirststepengine_is_done(
-        it, _status)
-}
-    }
-    )
-    }
-    
-
-    override fun `provide`(`data`: kotlin.ByteArray)
-        = 
-    callWithPointer {
-    uniffiRustCall() { _status ->
-    UniffiLib.INSTANCE.uniffi_tresse_ffi_fn_method_commitfirststepengine_provide(
-        it, FfiConverterByteArray.lower(`data`),_status)
-}
-    }
-    
-    
-
-    override fun `step`(): FfiStep {
-            return FfiConverterTypeFfiStep.lift(
-    callWithPointer {
-    uniffiRustCall() { _status ->
-    UniffiLib.INSTANCE.uniffi_tresse_ffi_fn_method_commitfirststepengine_step(
-        it, _status)
+    UniffiLib.INSTANCE.uniffi_tresse_ffi_fn_method_ffiignorerules_is_ignored(
+        it, FfiConverterString.lower(`path`),FfiConverterBoolean.lower(`isDir`),_status)
 }
     }
     )
@@ -2033,12 +1795,12 @@ open class CommitFirstStepEngine: Disposable, AutoCloseable, CommitFirstStepEngi
 
     
     /**
-     * The new version ID, available once `step()` returned `Done`.
-     */override fun `versionId`(): kotlin.String? {
-            return FfiConverterOptionalString.lift(
+     * Negations that can never fire because an ancestor is already excluded.
+     */override fun `warnings`(): List<kotlin.String> {
+            return FfiConverterSequenceString.lift(
     callWithPointer {
     uniffiRustCall() { _status ->
-    UniffiLib.INSTANCE.uniffi_tresse_ffi_fn_method_commitfirststepengine_version_id(
+    UniffiLib.INSTANCE.uniffi_tresse_ffi_fn_method_ffiignorerules_warnings(
         it, _status)
 }
     }
@@ -2057,1039 +1819,28 @@ open class CommitFirstStepEngine: Disposable, AutoCloseable, CommitFirstStepEngi
 /**
  * @suppress
  */
-public object FfiConverterTypeCommitFirstStepEngine: FfiConverter<CommitFirstStepEngine, Pointer> {
+public object FfiConverterTypeFfiIgnoreRules: FfiConverter<FfiIgnoreRules, Pointer> {
 
-    override fun lower(value: CommitFirstStepEngine): Pointer {
+    override fun lower(value: FfiIgnoreRules): Pointer {
         return value.uniffiClonePointer()
     }
 
-    override fun lift(value: Pointer): CommitFirstStepEngine {
-        return CommitFirstStepEngine(value)
+    override fun lift(value: Pointer): FfiIgnoreRules {
+        return FfiIgnoreRules(value)
     }
 
-    override fun read(buf: ByteBuffer): CommitFirstStepEngine {
+    override fun read(buf: ByteBuffer): FfiIgnoreRules {
         // The Rust code always writes pointers as 8 bytes, and will
         // fail to compile if they don't fit.
         return lift(Pointer(buf.getLong()))
     }
 
-    override fun allocationSize(value: CommitFirstStepEngine) = 8UL
+    override fun allocationSize(value: FfiIgnoreRules) = 8UL
 
-    override fun write(value: CommitFirstStepEngine, buf: ByteBuffer) {
+    override fun write(value: FfiIgnoreRules, buf: ByteBuffer) {
         // The Rust code always expects pointers written as 8 bytes,
         // and will fail to compile if they don't fit.
         buf.putLong(Pointer.nativeValue(lower(value)))
-    }
-}
-
-
-// This template implements a class for working with a Rust struct via a Pointer/Arc<T>
-// to the live Rust struct on the other side of the FFI.
-//
-// Each instance implements core operations for working with the Rust `Arc<T>` and the
-// Kotlin Pointer to work with the live Rust struct on the other side of the FFI.
-//
-// There's some subtlety here, because we have to be careful not to operate on a Rust
-// struct after it has been dropped, and because we must expose a public API for freeing
-// theq Kotlin wrapper object in lieu of reliable finalizers. The core requirements are:
-//
-//   * Each instance holds an opaque pointer to the underlying Rust struct.
-//     Method calls need to read this pointer from the object's state and pass it in to
-//     the Rust FFI.
-//
-//   * When an instance is no longer needed, its pointer should be passed to a
-//     special destructor function provided by the Rust FFI, which will drop the
-//     underlying Rust struct.
-//
-//   * Given an instance, calling code is expected to call the special
-//     `destroy` method in order to free it after use, either by calling it explicitly
-//     or by using a higher-level helper like the `use` method. Failing to do so risks
-//     leaking the underlying Rust struct.
-//
-//   * We can't assume that calling code will do the right thing, and must be prepared
-//     to handle Kotlin method calls executing concurrently with or even after a call to
-//     `destroy`, and to handle multiple (possibly concurrent!) calls to `destroy`.
-//
-//   * We must never allow Rust code to operate on the underlying Rust struct after
-//     the destructor has been called, and must never call the destructor more than once.
-//     Doing so may trigger memory unsafety.
-//
-//   * To mitigate many of the risks of leaking memory and use-after-free unsafety, a `Cleaner`
-//     is implemented to call the destructor when the Kotlin object becomes unreachable.
-//     This is done in a background thread. This is not a panacea, and client code should be aware that
-//      1. the thread may starve if some there are objects that have poorly performing
-//     `drop` methods or do significant work in their `drop` methods.
-//      2. the thread is shared across the whole library. This can be tuned by using `android_cleaner = true`,
-//         or `android = true` in the [`kotlin` section of the `uniffi.toml` file](https://mozilla.github.io/uniffi-rs/kotlin/configuration.html).
-//
-// If we try to implement this with mutual exclusion on access to the pointer, there is the
-// possibility of a race between a method call and a concurrent call to `destroy`:
-//
-//    * Thread A starts a method call, reads the value of the pointer, but is interrupted
-//      before it can pass the pointer over the FFI to Rust.
-//    * Thread B calls `destroy` and frees the underlying Rust struct.
-//    * Thread A resumes, passing the already-read pointer value to Rust and triggering
-//      a use-after-free.
-//
-// One possible solution would be to use a `ReadWriteLock`, with each method call taking
-// a read lock (and thus allowed to run concurrently) and the special `destroy` method
-// taking a write lock (and thus blocking on live method calls). However, we aim not to
-// generate methods with any hidden blocking semantics, and a `destroy` method that might
-// block if called incorrectly seems to meet that bar.
-//
-// So, we achieve our goals by giving each instance an associated `AtomicLong` counter to track
-// the number of in-flight method calls, and an `AtomicBoolean` flag to indicate whether `destroy`
-// has been called. These are updated according to the following rules:
-//
-//    * The initial value of the counter is 1, indicating a live object with no in-flight calls.
-//      The initial value for the flag is false.
-//
-//    * At the start of each method call, we atomically check the counter.
-//      If it is 0 then the underlying Rust struct has already been destroyed and the call is aborted.
-//      If it is nonzero them we atomically increment it by 1 and proceed with the method call.
-//
-//    * At the end of each method call, we atomically decrement and check the counter.
-//      If it has reached zero then we destroy the underlying Rust struct.
-//
-//    * When `destroy` is called, we atomically flip the flag from false to true.
-//      If the flag was already true we silently fail.
-//      Otherwise we atomically decrement and check the counter.
-//      If it has reached zero then we destroy the underlying Rust struct.
-//
-// Astute readers may observe that this all sounds very similar to the way that Rust's `Arc<T>` works,
-// and indeed it is, with the addition of a flag to guard against multiple calls to `destroy`.
-//
-// The overall effect is that the underlying Rust struct is destroyed only when `destroy` has been
-// called *and* all in-flight method calls have completed, avoiding violating any of the expectations
-// of the underlying Rust code.
-//
-// This makes a cleaner a better alternative to _not_ calling `destroy()` as
-// and when the object is finished with, but the abstraction is not perfect: if the Rust object's `drop`
-// method is slow, and/or there are many objects to cleanup, and it's on a low end Android device, then the cleaner
-// thread may be starved, and the app will leak memory.
-//
-// In this case, `destroy`ing manually may be a better solution.
-//
-// The cleaner can live side by side with the manual calling of `destroy`. In the order of responsiveness, uniffi objects
-// with Rust peers are reclaimed:
-//
-// 1. By calling the `destroy` method of the object, which calls `rustObject.free()`. If that doesn't happen:
-// 2. When the object becomes unreachable, AND the Cleaner thread gets to call `rustObject.free()`. If the thread is starved then:
-// 3. The memory is reclaimed when the process terminates.
-//
-// [1] https://stackoverflow.com/questions/24376768/can-java-finalize-an-object-when-it-is-still-in-scope/24380219
-//
-
-
-/**
- * Streaming delta commit engine.
- *
- * Commits a `CommitNode` + `Skel` pair against a disk base of `base_size`
- * bytes (input 0). Equivalent to `CommitStepEngine` in tresse-wasm.
- *
- * ```kotlin
- * val engine = CommitStepEngine(nodeJson, skelJson, baseSize)
- * while (true) {
- * when (val s = engine.step()) {
- * is FfiStep.Fetch    -> engine.provide(readFile(s.path))
- * is FfiStep.Read     -> engine.provide(readRange(s.input, s.off, s.len))
- * is FfiStep.Write    -> appendToOutput(s.bytes).also { engine.provide(byteArrayOf()) }
- * is FfiStep.OutRead  -> engine.provide(readOutput(s.from, s.to))
- * is FfiStep.OutReplace -> replaceOutput(s.from, s.bytes).also { engine.provide(byteArrayOf()) }
- * is FfiStep.OutPatch -> patchOutput(s.at, s.bytes).also { engine.provide(byteArrayOf()) }
- * is FfiStep.Done     -> break
- * is FfiStep.Err      -> throw Exception(s.message)
- * else -> error("unexpected step")
- * }
- * }
- * val outcome = engine.outcome()  // FfiCommitOutcome
- * ```
- */
-public interface CommitStepEngineInterface {
-    
-    /**
-     * Whether the commit has completed.
-     */
-    fun `isDone`(): kotlin.Boolean
-    
-    /**
-     * The commit outcome, available once `step()` returned `Done`.
-     */
-    fun `outcome`(): FfiCommitOutcome?
-    
-    /**
-     * Supply the result of the most recent step (bytes for Read/OutRead, empty for others).
-     */
-    fun `provide`(`data`: kotlin.ByteArray)
-    
-    /**
-     * Advance to the next host interaction.
-     */
-    fun `step`(): FfiStep
-    
-    companion object
-}
-
-/**
- * Streaming delta commit engine.
- *
- * Commits a `CommitNode` + `Skel` pair against a disk base of `base_size`
- * bytes (input 0). Equivalent to `CommitStepEngine` in tresse-wasm.
- *
- * ```kotlin
- * val engine = CommitStepEngine(nodeJson, skelJson, baseSize)
- * while (true) {
- * when (val s = engine.step()) {
- * is FfiStep.Fetch    -> engine.provide(readFile(s.path))
- * is FfiStep.Read     -> engine.provide(readRange(s.input, s.off, s.len))
- * is FfiStep.Write    -> appendToOutput(s.bytes).also { engine.provide(byteArrayOf()) }
- * is FfiStep.OutRead  -> engine.provide(readOutput(s.from, s.to))
- * is FfiStep.OutReplace -> replaceOutput(s.from, s.bytes).also { engine.provide(byteArrayOf()) }
- * is FfiStep.OutPatch -> patchOutput(s.at, s.bytes).also { engine.provide(byteArrayOf()) }
- * is FfiStep.Done     -> break
- * is FfiStep.Err      -> throw Exception(s.message)
- * else -> error("unexpected step")
- * }
- * }
- * val outcome = engine.outcome()  // FfiCommitOutcome
- * ```
- */
-open class CommitStepEngine: Disposable, AutoCloseable, CommitStepEngineInterface
-{
-
-    constructor(pointer: Pointer) {
-        this.pointer = pointer
-        this.cleanable = UniffiLib.CLEANER.register(this, UniffiCleanAction(pointer))
-    }
-
-    /**
-     * This constructor can be used to instantiate a fake object. Only used for tests. Any
-     * attempt to actually use an object constructed this way will fail as there is no
-     * connected Rust object.
-     */
-    @Suppress("UNUSED_PARAMETER")
-    constructor(noPointer: NoPointer) {
-        this.pointer = null
-        this.cleanable = UniffiLib.CLEANER.register(this, UniffiCleanAction(pointer))
-    }
-    /**
-     * Create an engine.
-     * - `node_json`: JSON-serialized `CommitNode` tree (unchanged files as
-     * `{"kind":"Unchanged","path":"..."}` with no content).
-     * - `skel_json`: JSON-serialized `Skel` tree (paths only, no content).
-     * - `base_size`: byte length of the base RDX file (input 0).
-     */
-    constructor(`nodeJson`: kotlin.String, `skelJson`: kotlin.String, `baseSize`: kotlin.ULong) :
-        this(
-    uniffiRustCallWithError(TresseException) { _status ->
-    UniffiLib.INSTANCE.uniffi_tresse_ffi_fn_constructor_commitstepengine_new(
-        FfiConverterString.lower(`nodeJson`),FfiConverterString.lower(`skelJson`),FfiConverterULong.lower(`baseSize`),_status)
-}
-    )
-
-    protected val pointer: Pointer?
-    protected val cleanable: UniffiCleaner.Cleanable
-
-    private val wasDestroyed = AtomicBoolean(false)
-    private val callCounter = AtomicLong(1)
-
-    override fun destroy() {
-        // Only allow a single call to this method.
-        // TODO: maybe we should log a warning if called more than once?
-        if (this.wasDestroyed.compareAndSet(false, true)) {
-            // This decrement always matches the initial count of 1 given at creation time.
-            if (this.callCounter.decrementAndGet() == 0L) {
-                cleanable.clean()
-            }
-        }
-    }
-
-    @Synchronized
-    override fun close() {
-        this.destroy()
-    }
-
-    internal inline fun <R> callWithPointer(block: (ptr: Pointer) -> R): R {
-        // Check and increment the call counter, to keep the object alive.
-        // This needs a compare-and-set retry loop in case of concurrent updates.
-        do {
-            val c = this.callCounter.get()
-            if (c == 0L) {
-                throw IllegalStateException("${this.javaClass.simpleName} object has already been destroyed")
-            }
-            if (c == Long.MAX_VALUE) {
-                throw IllegalStateException("${this.javaClass.simpleName} call counter would overflow")
-            }
-        } while (! this.callCounter.compareAndSet(c, c + 1L))
-        // Now we can safely do the method call without the pointer being freed concurrently.
-        try {
-            return block(this.uniffiClonePointer())
-        } finally {
-            // This decrement always matches the increment we performed above.
-            if (this.callCounter.decrementAndGet() == 0L) {
-                cleanable.clean()
-            }
-        }
-    }
-
-    // Use a static inner class instead of a closure so as not to accidentally
-    // capture `this` as part of the cleanable's action.
-    private class UniffiCleanAction(private val pointer: Pointer?) : Runnable {
-        override fun run() {
-            pointer?.let { ptr ->
-                uniffiRustCall { status ->
-                    UniffiLib.INSTANCE.uniffi_tresse_ffi_fn_free_commitstepengine(ptr, status)
-                }
-            }
-        }
-    }
-
-    fun uniffiClonePointer(): Pointer {
-        return uniffiRustCall() { status ->
-            UniffiLib.INSTANCE.uniffi_tresse_ffi_fn_clone_commitstepengine(pointer!!, status)
-        }
-    }
-
-    
-    /**
-     * Whether the commit has completed.
-     */override fun `isDone`(): kotlin.Boolean {
-            return FfiConverterBoolean.lift(
-    callWithPointer {
-    uniffiRustCall() { _status ->
-    UniffiLib.INSTANCE.uniffi_tresse_ffi_fn_method_commitstepengine_is_done(
-        it, _status)
-}
-    }
-    )
-    }
-    
-
-    
-    /**
-     * The commit outcome, available once `step()` returned `Done`.
-     */override fun `outcome`(): FfiCommitOutcome? {
-            return FfiConverterOptionalTypeFfiCommitOutcome.lift(
-    callWithPointer {
-    uniffiRustCall() { _status ->
-    UniffiLib.INSTANCE.uniffi_tresse_ffi_fn_method_commitstepengine_outcome(
-        it, _status)
-}
-    }
-    )
-    }
-    
-
-    
-    /**
-     * Supply the result of the most recent step (bytes for Read/OutRead, empty for others).
-     */override fun `provide`(`data`: kotlin.ByteArray)
-        = 
-    callWithPointer {
-    uniffiRustCall() { _status ->
-    UniffiLib.INSTANCE.uniffi_tresse_ffi_fn_method_commitstepengine_provide(
-        it, FfiConverterByteArray.lower(`data`),_status)
-}
-    }
-    
-    
-
-    
-    /**
-     * Advance to the next host interaction.
-     */override fun `step`(): FfiStep {
-            return FfiConverterTypeFfiStep.lift(
-    callWithPointer {
-    uniffiRustCall() { _status ->
-    UniffiLib.INSTANCE.uniffi_tresse_ffi_fn_method_commitstepengine_step(
-        it, _status)
-}
-    }
-    )
-    }
-    
-
-    
-
-    
-    
-    companion object
-    
-}
-
-/**
- * @suppress
- */
-public object FfiConverterTypeCommitStepEngine: FfiConverter<CommitStepEngine, Pointer> {
-
-    override fun lower(value: CommitStepEngine): Pointer {
-        return value.uniffiClonePointer()
-    }
-
-    override fun lift(value: Pointer): CommitStepEngine {
-        return CommitStepEngine(value)
-    }
-
-    override fun read(buf: ByteBuffer): CommitStepEngine {
-        // The Rust code always writes pointers as 8 bytes, and will
-        // fail to compile if they don't fit.
-        return lift(Pointer(buf.getLong()))
-    }
-
-    override fun allocationSize(value: CommitStepEngine) = 8UL
-
-    override fun write(value: CommitStepEngine, buf: ByteBuffer) {
-        // The Rust code always expects pointers written as 8 bytes,
-        // and will fail to compile if they don't fit.
-        buf.putLong(Pointer.nativeValue(lower(value)))
-    }
-}
-
-
-// This template implements a class for working with a Rust struct via a Pointer/Arc<T>
-// to the live Rust struct on the other side of the FFI.
-//
-// Each instance implements core operations for working with the Rust `Arc<T>` and the
-// Kotlin Pointer to work with the live Rust struct on the other side of the FFI.
-//
-// There's some subtlety here, because we have to be careful not to operate on a Rust
-// struct after it has been dropped, and because we must expose a public API for freeing
-// theq Kotlin wrapper object in lieu of reliable finalizers. The core requirements are:
-//
-//   * Each instance holds an opaque pointer to the underlying Rust struct.
-//     Method calls need to read this pointer from the object's state and pass it in to
-//     the Rust FFI.
-//
-//   * When an instance is no longer needed, its pointer should be passed to a
-//     special destructor function provided by the Rust FFI, which will drop the
-//     underlying Rust struct.
-//
-//   * Given an instance, calling code is expected to call the special
-//     `destroy` method in order to free it after use, either by calling it explicitly
-//     or by using a higher-level helper like the `use` method. Failing to do so risks
-//     leaking the underlying Rust struct.
-//
-//   * We can't assume that calling code will do the right thing, and must be prepared
-//     to handle Kotlin method calls executing concurrently with or even after a call to
-//     `destroy`, and to handle multiple (possibly concurrent!) calls to `destroy`.
-//
-//   * We must never allow Rust code to operate on the underlying Rust struct after
-//     the destructor has been called, and must never call the destructor more than once.
-//     Doing so may trigger memory unsafety.
-//
-//   * To mitigate many of the risks of leaking memory and use-after-free unsafety, a `Cleaner`
-//     is implemented to call the destructor when the Kotlin object becomes unreachable.
-//     This is done in a background thread. This is not a panacea, and client code should be aware that
-//      1. the thread may starve if some there are objects that have poorly performing
-//     `drop` methods or do significant work in their `drop` methods.
-//      2. the thread is shared across the whole library. This can be tuned by using `android_cleaner = true`,
-//         or `android = true` in the [`kotlin` section of the `uniffi.toml` file](https://mozilla.github.io/uniffi-rs/kotlin/configuration.html).
-//
-// If we try to implement this with mutual exclusion on access to the pointer, there is the
-// possibility of a race between a method call and a concurrent call to `destroy`:
-//
-//    * Thread A starts a method call, reads the value of the pointer, but is interrupted
-//      before it can pass the pointer over the FFI to Rust.
-//    * Thread B calls `destroy` and frees the underlying Rust struct.
-//    * Thread A resumes, passing the already-read pointer value to Rust and triggering
-//      a use-after-free.
-//
-// One possible solution would be to use a `ReadWriteLock`, with each method call taking
-// a read lock (and thus allowed to run concurrently) and the special `destroy` method
-// taking a write lock (and thus blocking on live method calls). However, we aim not to
-// generate methods with any hidden blocking semantics, and a `destroy` method that might
-// block if called incorrectly seems to meet that bar.
-//
-// So, we achieve our goals by giving each instance an associated `AtomicLong` counter to track
-// the number of in-flight method calls, and an `AtomicBoolean` flag to indicate whether `destroy`
-// has been called. These are updated according to the following rules:
-//
-//    * The initial value of the counter is 1, indicating a live object with no in-flight calls.
-//      The initial value for the flag is false.
-//
-//    * At the start of each method call, we atomically check the counter.
-//      If it is 0 then the underlying Rust struct has already been destroyed and the call is aborted.
-//      If it is nonzero them we atomically increment it by 1 and proceed with the method call.
-//
-//    * At the end of each method call, we atomically decrement and check the counter.
-//      If it has reached zero then we destroy the underlying Rust struct.
-//
-//    * When `destroy` is called, we atomically flip the flag from false to true.
-//      If the flag was already true we silently fail.
-//      Otherwise we atomically decrement and check the counter.
-//      If it has reached zero then we destroy the underlying Rust struct.
-//
-// Astute readers may observe that this all sounds very similar to the way that Rust's `Arc<T>` works,
-// and indeed it is, with the addition of a flag to guard against multiple calls to `destroy`.
-//
-// The overall effect is that the underlying Rust struct is destroyed only when `destroy` has been
-// called *and* all in-flight method calls have completed, avoiding violating any of the expectations
-// of the underlying Rust code.
-//
-// This makes a cleaner a better alternative to _not_ calling `destroy()` as
-// and when the object is finished with, but the abstraction is not perfect: if the Rust object's `drop`
-// method is slow, and/or there are many objects to cleanup, and it's on a low end Android device, then the cleaner
-// thread may be starved, and the app will leak memory.
-//
-// In this case, `destroy`ing manually may be a better solution.
-//
-// The cleaner can live side by side with the manual calling of `destroy`. In the order of responsiveness, uniffi objects
-// with Rust peers are reclaimed:
-//
-// 1. By calling the `destroy` method of the object, which calls `rustObject.free()`. If that doesn't happen:
-// 2. When the object becomes unreachable, AND the Cleaner thread gets to call `rustObject.free()`. If the thread is starved then:
-// 3. The memory is reclaimed when the process terminates.
-//
-// [1] https://stackoverflow.com/questions/24376768/can-java-finalize-an-object-when-it-is-still-in-scope/24380219
-//
-
-
-/**
- * Pull-based restore iterator. Simpler than `RestoreStepEngine` when all diffs
- * are already in memory. Call `nextFile()` until it returns `null`.
- *
- * ```kotlin
- * val iter = FfiRestoreIterator.fromDiffs(listOf(diff1, diff2, diff3))
- * while (true) {
- * val file = iter.nextFile() ?: break
- * when (file) {
- * is FfiRestoredFile.Text   -> vault.write(file.path, file.content)
- * is FfiRestoredFile.Binary -> vault.write(file.path, file.data)
- * }
- * }
- * ```
- */
-public interface FfiRestoreIteratorInterface {
-    
-    /**
-     * Return the next file, or `null` when done.
-     */
-    fun `nextFile`(): FfiRestoredFile?
-    
-    companion object
-}
-
-/**
- * Pull-based restore iterator. Simpler than `RestoreStepEngine` when all diffs
- * are already in memory. Call `nextFile()` until it returns `null`.
- *
- * ```kotlin
- * val iter = FfiRestoreIterator.fromDiffs(listOf(diff1, diff2, diff3))
- * while (true) {
- * val file = iter.nextFile() ?: break
- * when (file) {
- * is FfiRestoredFile.Text   -> vault.write(file.path, file.content)
- * is FfiRestoredFile.Binary -> vault.write(file.path, file.data)
- * }
- * }
- * ```
- */
-open class FfiRestoreIterator: Disposable, AutoCloseable, FfiRestoreIteratorInterface
-{
-
-    constructor(pointer: Pointer) {
-        this.pointer = pointer
-        this.cleanable = UniffiLib.CLEANER.register(this, UniffiCleanAction(pointer))
-    }
-
-    /**
-     * This constructor can be used to instantiate a fake object. Only used for tests. Any
-     * attempt to actually use an object constructed this way will fail as there is no
-     * connected Rust object.
-     */
-    @Suppress("UNUSED_PARAMETER")
-    constructor(noPointer: NoPointer) {
-        this.pointer = null
-        this.cleanable = UniffiLib.CLEANER.register(this, UniffiCleanAction(pointer))
-    }
-
-    protected val pointer: Pointer?
-    protected val cleanable: UniffiCleaner.Cleanable
-
-    private val wasDestroyed = AtomicBoolean(false)
-    private val callCounter = AtomicLong(1)
-
-    override fun destroy() {
-        // Only allow a single call to this method.
-        // TODO: maybe we should log a warning if called more than once?
-        if (this.wasDestroyed.compareAndSet(false, true)) {
-            // This decrement always matches the initial count of 1 given at creation time.
-            if (this.callCounter.decrementAndGet() == 0L) {
-                cleanable.clean()
-            }
-        }
-    }
-
-    @Synchronized
-    override fun close() {
-        this.destroy()
-    }
-
-    internal inline fun <R> callWithPointer(block: (ptr: Pointer) -> R): R {
-        // Check and increment the call counter, to keep the object alive.
-        // This needs a compare-and-set retry loop in case of concurrent updates.
-        do {
-            val c = this.callCounter.get()
-            if (c == 0L) {
-                throw IllegalStateException("${this.javaClass.simpleName} object has already been destroyed")
-            }
-            if (c == Long.MAX_VALUE) {
-                throw IllegalStateException("${this.javaClass.simpleName} call counter would overflow")
-            }
-        } while (! this.callCounter.compareAndSet(c, c + 1L))
-        // Now we can safely do the method call without the pointer being freed concurrently.
-        try {
-            return block(this.uniffiClonePointer())
-        } finally {
-            // This decrement always matches the increment we performed above.
-            if (this.callCounter.decrementAndGet() == 0L) {
-                cleanable.clean()
-            }
-        }
-    }
-
-    // Use a static inner class instead of a closure so as not to accidentally
-    // capture `this` as part of the cleanable's action.
-    private class UniffiCleanAction(private val pointer: Pointer?) : Runnable {
-        override fun run() {
-            pointer?.let { ptr ->
-                uniffiRustCall { status ->
-                    UniffiLib.INSTANCE.uniffi_tresse_ffi_fn_free_ffirestoreiterator(ptr, status)
-                }
-            }
-        }
-    }
-
-    fun uniffiClonePointer(): Pointer {
-        return uniffiRustCall() { status ->
-            UniffiLib.INSTANCE.uniffi_tresse_ffi_fn_clone_ffirestoreiterator(pointer!!, status)
-        }
-    }
-
-    
-    /**
-     * Return the next file, or `null` when done.
-     */
-    @Throws(TresseException::class)override fun `nextFile`(): FfiRestoredFile? {
-            return FfiConverterOptionalTypeFfiRestoredFile.lift(
-    callWithPointer {
-    uniffiRustCallWithError(TresseException) { _status ->
-    UniffiLib.INSTANCE.uniffi_tresse_ffi_fn_method_ffirestoreiterator_next_file(
-        it, _status)
-}
-    }
-    )
-    }
-    
-
-    
-
-    
-    companion object {
-        
-    /**
-     * Build a restore iterator from a list of version diffs (each as binary RDX bytes).
-     */ fun `fromDiffs`(`diffs`: List<kotlin.ByteArray>): FfiRestoreIterator {
-            return FfiConverterTypeFfiRestoreIterator.lift(
-    uniffiRustCall() { _status ->
-    UniffiLib.INSTANCE.uniffi_tresse_ffi_fn_constructor_ffirestoreiterator_fromdiffs(
-        FfiConverterSequenceByteArray.lower(`diffs`),_status)
-}
-    )
-    }
-    
-
-        
-    /**
-     * Build a restore iterator from a single merged RDX blob.
-     */ fun `fromMerged`(`merged`: kotlin.ByteArray): FfiRestoreIterator {
-            return FfiConverterTypeFfiRestoreIterator.lift(
-    uniffiRustCall() { _status ->
-    UniffiLib.INSTANCE.uniffi_tresse_ffi_fn_constructor_ffirestoreiterator_frommerged(
-        FfiConverterByteArray.lower(`merged`),_status)
-}
-    )
-    }
-    
-
-        
-    }
-    
-}
-
-/**
- * @suppress
- */
-public object FfiConverterTypeFfiRestoreIterator: FfiConverter<FfiRestoreIterator, Pointer> {
-
-    override fun lower(value: FfiRestoreIterator): Pointer {
-        return value.uniffiClonePointer()
-    }
-
-    override fun lift(value: Pointer): FfiRestoreIterator {
-        return FfiRestoreIterator(value)
-    }
-
-    override fun read(buf: ByteBuffer): FfiRestoreIterator {
-        // The Rust code always writes pointers as 8 bytes, and will
-        // fail to compile if they don't fit.
-        return lift(Pointer(buf.getLong()))
-    }
-
-    override fun allocationSize(value: FfiRestoreIterator) = 8UL
-
-    override fun write(value: FfiRestoreIterator, buf: ByteBuffer) {
-        // The Rust code always expects pointers written as 8 bytes,
-        // and will fail to compile if they don't fit.
-        buf.putLong(Pointer.nativeValue(lower(value)))
-    }
-}
-
-
-// This template implements a class for working with a Rust struct via a Pointer/Arc<T>
-// to the live Rust struct on the other side of the FFI.
-//
-// Each instance implements core operations for working with the Rust `Arc<T>` and the
-// Kotlin Pointer to work with the live Rust struct on the other side of the FFI.
-//
-// There's some subtlety here, because we have to be careful not to operate on a Rust
-// struct after it has been dropped, and because we must expose a public API for freeing
-// theq Kotlin wrapper object in lieu of reliable finalizers. The core requirements are:
-//
-//   * Each instance holds an opaque pointer to the underlying Rust struct.
-//     Method calls need to read this pointer from the object's state and pass it in to
-//     the Rust FFI.
-//
-//   * When an instance is no longer needed, its pointer should be passed to a
-//     special destructor function provided by the Rust FFI, which will drop the
-//     underlying Rust struct.
-//
-//   * Given an instance, calling code is expected to call the special
-//     `destroy` method in order to free it after use, either by calling it explicitly
-//     or by using a higher-level helper like the `use` method. Failing to do so risks
-//     leaking the underlying Rust struct.
-//
-//   * We can't assume that calling code will do the right thing, and must be prepared
-//     to handle Kotlin method calls executing concurrently with or even after a call to
-//     `destroy`, and to handle multiple (possibly concurrent!) calls to `destroy`.
-//
-//   * We must never allow Rust code to operate on the underlying Rust struct after
-//     the destructor has been called, and must never call the destructor more than once.
-//     Doing so may trigger memory unsafety.
-//
-//   * To mitigate many of the risks of leaking memory and use-after-free unsafety, a `Cleaner`
-//     is implemented to call the destructor when the Kotlin object becomes unreachable.
-//     This is done in a background thread. This is not a panacea, and client code should be aware that
-//      1. the thread may starve if some there are objects that have poorly performing
-//     `drop` methods or do significant work in their `drop` methods.
-//      2. the thread is shared across the whole library. This can be tuned by using `android_cleaner = true`,
-//         or `android = true` in the [`kotlin` section of the `uniffi.toml` file](https://mozilla.github.io/uniffi-rs/kotlin/configuration.html).
-//
-// If we try to implement this with mutual exclusion on access to the pointer, there is the
-// possibility of a race between a method call and a concurrent call to `destroy`:
-//
-//    * Thread A starts a method call, reads the value of the pointer, but is interrupted
-//      before it can pass the pointer over the FFI to Rust.
-//    * Thread B calls `destroy` and frees the underlying Rust struct.
-//    * Thread A resumes, passing the already-read pointer value to Rust and triggering
-//      a use-after-free.
-//
-// One possible solution would be to use a `ReadWriteLock`, with each method call taking
-// a read lock (and thus allowed to run concurrently) and the special `destroy` method
-// taking a write lock (and thus blocking on live method calls). However, we aim not to
-// generate methods with any hidden blocking semantics, and a `destroy` method that might
-// block if called incorrectly seems to meet that bar.
-//
-// So, we achieve our goals by giving each instance an associated `AtomicLong` counter to track
-// the number of in-flight method calls, and an `AtomicBoolean` flag to indicate whether `destroy`
-// has been called. These are updated according to the following rules:
-//
-//    * The initial value of the counter is 1, indicating a live object with no in-flight calls.
-//      The initial value for the flag is false.
-//
-//    * At the start of each method call, we atomically check the counter.
-//      If it is 0 then the underlying Rust struct has already been destroyed and the call is aborted.
-//      If it is nonzero them we atomically increment it by 1 and proceed with the method call.
-//
-//    * At the end of each method call, we atomically decrement and check the counter.
-//      If it has reached zero then we destroy the underlying Rust struct.
-//
-//    * When `destroy` is called, we atomically flip the flag from false to true.
-//      If the flag was already true we silently fail.
-//      Otherwise we atomically decrement and check the counter.
-//      If it has reached zero then we destroy the underlying Rust struct.
-//
-// Astute readers may observe that this all sounds very similar to the way that Rust's `Arc<T>` works,
-// and indeed it is, with the addition of a flag to guard against multiple calls to `destroy`.
-//
-// The overall effect is that the underlying Rust struct is destroyed only when `destroy` has been
-// called *and* all in-flight method calls have completed, avoiding violating any of the expectations
-// of the underlying Rust code.
-//
-// This makes a cleaner a better alternative to _not_ calling `destroy()` as
-// and when the object is finished with, but the abstraction is not perfect: if the Rust object's `drop`
-// method is slow, and/or there are many objects to cleanup, and it's on a low end Android device, then the cleaner
-// thread may be starved, and the app will leak memory.
-//
-// In this case, `destroy`ing manually may be a better solution.
-//
-// The cleaner can live side by side with the manual calling of `destroy`. In the order of responsiveness, uniffi objects
-// with Rust peers are reclaimed:
-//
-// 1. By calling the `destroy` method of the object, which calls `rustObject.free()`. If that doesn't happen:
-// 2. When the object becomes unreachable, AND the Cleaner thread gets to call `rustObject.free()`. If the thread is starved then:
-// 3. The memory is reclaimed when the process terminates.
-//
-// [1] https://stackoverflow.com/questions/24376768/can-java-finalize-an-object-when-it-is-still-in-scope/24380219
-//
-
-
-/**
- * Streaming restore engine.
- *
- * Restores the latest version from a folded base RDX file of `base_size`
- * bytes (input 0), emitting each surviving file via `FfiStep::EmitFile`.
- * Equivalent to `RestoreStepEngine` in tresse-wasm.
- *
- * ```kotlin
- * val engine = RestoreStepEngine(baseSize)
- * while (true) {
- * when (val s = engine.step()) {
- * is FfiStep.Read     -> engine.provide(readRange(s.off, s.len))
- * is FfiStep.EmitFile -> writeFile(s.path, s.bytes).also { engine.provide(byteArrayOf()) }
- * is FfiStep.Done     -> break
- * is FfiStep.Err      -> throw Exception(s.message)
- * else -> error("unexpected step")
- * }
- * }
- * ```
- */
-public interface RestoreStepEngineInterface {
-    
-    fun `isDone`(): kotlin.Boolean
-    
-    fun `provide`(`data`: kotlin.ByteArray)
-    
-    fun `step`(): FfiStep
-    
-    companion object
-}
-
-/**
- * Streaming restore engine.
- *
- * Restores the latest version from a folded base RDX file of `base_size`
- * bytes (input 0), emitting each surviving file via `FfiStep::EmitFile`.
- * Equivalent to `RestoreStepEngine` in tresse-wasm.
- *
- * ```kotlin
- * val engine = RestoreStepEngine(baseSize)
- * while (true) {
- * when (val s = engine.step()) {
- * is FfiStep.Read     -> engine.provide(readRange(s.off, s.len))
- * is FfiStep.EmitFile -> writeFile(s.path, s.bytes).also { engine.provide(byteArrayOf()) }
- * is FfiStep.Done     -> break
- * is FfiStep.Err      -> throw Exception(s.message)
- * else -> error("unexpected step")
- * }
- * }
- * ```
- */
-open class RestoreStepEngine: Disposable, AutoCloseable, RestoreStepEngineInterface
-{
-
-    constructor(pointer: Pointer) {
-        this.pointer = pointer
-        this.cleanable = UniffiLib.CLEANER.register(this, UniffiCleanAction(pointer))
-    }
-
-    /**
-     * This constructor can be used to instantiate a fake object. Only used for tests. Any
-     * attempt to actually use an object constructed this way will fail as there is no
-     * connected Rust object.
-     */
-    @Suppress("UNUSED_PARAMETER")
-    constructor(noPointer: NoPointer) {
-        this.pointer = null
-        this.cleanable = UniffiLib.CLEANER.register(this, UniffiCleanAction(pointer))
-    }
-    /**
-     * Create an engine restoring from a base file of `base_size` bytes (input 0).
-     */
-    constructor(`baseSize`: kotlin.ULong) :
-        this(
-    uniffiRustCall() { _status ->
-    UniffiLib.INSTANCE.uniffi_tresse_ffi_fn_constructor_restorestepengine_new(
-        FfiConverterULong.lower(`baseSize`),_status)
-}
-    )
-
-    protected val pointer: Pointer?
-    protected val cleanable: UniffiCleaner.Cleanable
-
-    private val wasDestroyed = AtomicBoolean(false)
-    private val callCounter = AtomicLong(1)
-
-    override fun destroy() {
-        // Only allow a single call to this method.
-        // TODO: maybe we should log a warning if called more than once?
-        if (this.wasDestroyed.compareAndSet(false, true)) {
-            // This decrement always matches the initial count of 1 given at creation time.
-            if (this.callCounter.decrementAndGet() == 0L) {
-                cleanable.clean()
-            }
-        }
-    }
-
-    @Synchronized
-    override fun close() {
-        this.destroy()
-    }
-
-    internal inline fun <R> callWithPointer(block: (ptr: Pointer) -> R): R {
-        // Check and increment the call counter, to keep the object alive.
-        // This needs a compare-and-set retry loop in case of concurrent updates.
-        do {
-            val c = this.callCounter.get()
-            if (c == 0L) {
-                throw IllegalStateException("${this.javaClass.simpleName} object has already been destroyed")
-            }
-            if (c == Long.MAX_VALUE) {
-                throw IllegalStateException("${this.javaClass.simpleName} call counter would overflow")
-            }
-        } while (! this.callCounter.compareAndSet(c, c + 1L))
-        // Now we can safely do the method call without the pointer being freed concurrently.
-        try {
-            return block(this.uniffiClonePointer())
-        } finally {
-            // This decrement always matches the increment we performed above.
-            if (this.callCounter.decrementAndGet() == 0L) {
-                cleanable.clean()
-            }
-        }
-    }
-
-    // Use a static inner class instead of a closure so as not to accidentally
-    // capture `this` as part of the cleanable's action.
-    private class UniffiCleanAction(private val pointer: Pointer?) : Runnable {
-        override fun run() {
-            pointer?.let { ptr ->
-                uniffiRustCall { status ->
-                    UniffiLib.INSTANCE.uniffi_tresse_ffi_fn_free_restorestepengine(ptr, status)
-                }
-            }
-        }
-    }
-
-    fun uniffiClonePointer(): Pointer {
-        return uniffiRustCall() { status ->
-            UniffiLib.INSTANCE.uniffi_tresse_ffi_fn_clone_restorestepengine(pointer!!, status)
-        }
-    }
-
-    override fun `isDone`(): kotlin.Boolean {
-            return FfiConverterBoolean.lift(
-    callWithPointer {
-    uniffiRustCall() { _status ->
-    UniffiLib.INSTANCE.uniffi_tresse_ffi_fn_method_restorestepengine_is_done(
-        it, _status)
-}
-    }
-    )
-    }
-    
-
-    override fun `provide`(`data`: kotlin.ByteArray)
-        = 
-    callWithPointer {
-    uniffiRustCall() { _status ->
-    UniffiLib.INSTANCE.uniffi_tresse_ffi_fn_method_restorestepengine_provide(
-        it, FfiConverterByteArray.lower(`data`),_status)
-}
-    }
-    
-    
-
-    override fun `step`(): FfiStep {
-            return FfiConverterTypeFfiStep.lift(
-    callWithPointer {
-    uniffiRustCall() { _status ->
-    UniffiLib.INSTANCE.uniffi_tresse_ffi_fn_method_restorestepengine_step(
-        it, _status)
-}
-    }
-    )
-    }
-    
-
-    
-
-    
-    
-    companion object
-    
-}
-
-/**
- * @suppress
- */
-public object FfiConverterTypeRestoreStepEngine: FfiConverter<RestoreStepEngine, Pointer> {
-
-    override fun lower(value: RestoreStepEngine): Pointer {
-        return value.uniffiClonePointer()
-    }
-
-    override fun lift(value: Pointer): RestoreStepEngine {
-        return RestoreStepEngine(value)
-    }
-
-    override fun read(buf: ByteBuffer): RestoreStepEngine {
-        // The Rust code always writes pointers as 8 bytes, and will
-        // fail to compile if they don't fit.
-        return lift(Pointer(buf.getLong()))
-    }
-
-    override fun allocationSize(value: RestoreStepEngine) = 8UL
-
-    override fun write(value: RestoreStepEngine, buf: ByteBuffer) {
-        // The Rust code always expects pointers written as 8 bytes,
-        // and will fail to compile if they don't fit.
-        buf.putLong(Pointer.nativeValue(lower(value)))
-    }
-}
-
-
-
-data class FfiCommitResult (
-    var `versionId`: kotlin.String, 
-    /**
-     * The version delta as binary RDX bytes.
-     */
-    var `diff`: kotlin.ByteArray
-) {
-    
-    companion object
-}
-
-/**
- * @suppress
- */
-public object FfiConverterTypeFfiCommitResult: FfiConverterRustBuffer<FfiCommitResult> {
-    override fun read(buf: ByteBuffer): FfiCommitResult {
-        return FfiCommitResult(
-            FfiConverterString.read(buf),
-            FfiConverterByteArray.read(buf),
-        )
-    }
-
-    override fun allocationSize(value: FfiCommitResult) = (
-            FfiConverterString.allocationSize(value.`versionId`) +
-            FfiConverterByteArray.allocationSize(value.`diff`)
-    )
-
-    override fun write(value: FfiCommitResult, buf: ByteBuffer) {
-            FfiConverterString.write(value.`versionId`, buf)
-            FfiConverterByteArray.write(value.`diff`, buf)
     }
 }
 
@@ -3247,44 +1998,6 @@ public object FfiConverterTypeFfiSyncOutcome: FfiConverterRustBuffer<FfiSyncOutc
 
 
 
-data class FfiSyncPlan (
-    /**
-     * Version IDs that exist on remote but not locally; should be fetched.
-     */
-    var `fetch`: List<kotlin.String>, 
-    /**
-     * Version IDs that exist locally but not on remote; should be pushed.
-     */
-    var `push`: List<kotlin.String>
-) {
-    
-    companion object
-}
-
-/**
- * @suppress
- */
-public object FfiConverterTypeFfiSyncPlan: FfiConverterRustBuffer<FfiSyncPlan> {
-    override fun read(buf: ByteBuffer): FfiSyncPlan {
-        return FfiSyncPlan(
-            FfiConverterSequenceString.read(buf),
-            FfiConverterSequenceString.read(buf),
-        )
-    }
-
-    override fun allocationSize(value: FfiSyncPlan) = (
-            FfiConverterSequenceString.allocationSize(value.`fetch`) +
-            FfiConverterSequenceString.allocationSize(value.`push`)
-    )
-
-    override fun write(value: FfiSyncPlan, buf: ByteBuffer) {
-            FfiConverterSequenceString.write(value.`fetch`, buf)
-            FfiConverterSequenceString.write(value.`push`, buf)
-    }
-}
-
-
-
 /**
  * One vault file for the commit skeleton.
  */
@@ -3331,543 +2044,6 @@ public object FfiConverterTypeFfiVaultFile: FfiConverterRustBuffer<FfiVaultFile>
             FfiConverterULong.write(value.`size`, buf)
     }
 }
-
-
-
-sealed class FfiCommitOutcome {
-    
-    /**
-     * Nothing changed; no delta was written.
-     */
-    object NoChange : FfiCommitOutcome()
-    
-    
-    /**
-     * A delta was successfully streamed. `version_id` is the new version label.
-     */
-    data class Wrote(
-        val `versionId`: kotlin.String) : FfiCommitOutcome() {
-        companion object
-    }
-    
-    /**
-     * Structural change too large for the streaming path;
-     * caller should re-commit via `commit_vault` with full content.
-     */
-    object Fallback : FfiCommitOutcome()
-    
-    
-
-    
-    companion object
-}
-
-/**
- * @suppress
- */
-public object FfiConverterTypeFfiCommitOutcome : FfiConverterRustBuffer<FfiCommitOutcome>{
-    override fun read(buf: ByteBuffer): FfiCommitOutcome {
-        return when(buf.getInt()) {
-            1 -> FfiCommitOutcome.NoChange
-            2 -> FfiCommitOutcome.Wrote(
-                FfiConverterString.read(buf),
-                )
-            3 -> FfiCommitOutcome.Fallback
-            else -> throw RuntimeException("invalid enum value, something is very wrong!!")
-        }
-    }
-
-    override fun allocationSize(value: FfiCommitOutcome) = when(value) {
-        is FfiCommitOutcome.NoChange -> {
-            // Add the size for the Int that specifies the variant plus the size needed for all fields
-            (
-                4UL
-            )
-        }
-        is FfiCommitOutcome.Wrote -> {
-            // Add the size for the Int that specifies the variant plus the size needed for all fields
-            (
-                4UL
-                + FfiConverterString.allocationSize(value.`versionId`)
-            )
-        }
-        is FfiCommitOutcome.Fallback -> {
-            // Add the size for the Int that specifies the variant plus the size needed for all fields
-            (
-                4UL
-            )
-        }
-    }
-
-    override fun write(value: FfiCommitOutcome, buf: ByteBuffer) {
-        when(value) {
-            is FfiCommitOutcome.NoChange -> {
-                buf.putInt(1)
-                Unit
-            }
-            is FfiCommitOutcome.Wrote -> {
-                buf.putInt(2)
-                FfiConverterString.write(value.`versionId`, buf)
-                Unit
-            }
-            is FfiCommitOutcome.Fallback -> {
-                buf.putInt(3)
-                Unit
-            }
-        }.let { /* this makes the `when` an expression, which ensures it is exhaustive */ }
-    }
-}
-
-
-
-
-
-sealed class FfiRestoredFile {
-    
-    data class Text(
-        val `path`: kotlin.String, 
-        val `content`: kotlin.String) : FfiRestoredFile() {
-        companion object
-    }
-    
-    data class Binary(
-        val `path`: kotlin.String, 
-        val `data`: kotlin.ByteArray) : FfiRestoredFile() {
-        companion object
-    }
-    
-
-    
-    companion object
-}
-
-/**
- * @suppress
- */
-public object FfiConverterTypeFfiRestoredFile : FfiConverterRustBuffer<FfiRestoredFile>{
-    override fun read(buf: ByteBuffer): FfiRestoredFile {
-        return when(buf.getInt()) {
-            1 -> FfiRestoredFile.Text(
-                FfiConverterString.read(buf),
-                FfiConverterString.read(buf),
-                )
-            2 -> FfiRestoredFile.Binary(
-                FfiConverterString.read(buf),
-                FfiConverterByteArray.read(buf),
-                )
-            else -> throw RuntimeException("invalid enum value, something is very wrong!!")
-        }
-    }
-
-    override fun allocationSize(value: FfiRestoredFile) = when(value) {
-        is FfiRestoredFile.Text -> {
-            // Add the size for the Int that specifies the variant plus the size needed for all fields
-            (
-                4UL
-                + FfiConverterString.allocationSize(value.`path`)
-                + FfiConverterString.allocationSize(value.`content`)
-            )
-        }
-        is FfiRestoredFile.Binary -> {
-            // Add the size for the Int that specifies the variant plus the size needed for all fields
-            (
-                4UL
-                + FfiConverterString.allocationSize(value.`path`)
-                + FfiConverterByteArray.allocationSize(value.`data`)
-            )
-        }
-    }
-
-    override fun write(value: FfiRestoredFile, buf: ByteBuffer) {
-        when(value) {
-            is FfiRestoredFile.Text -> {
-                buf.putInt(1)
-                FfiConverterString.write(value.`path`, buf)
-                FfiConverterString.write(value.`content`, buf)
-                Unit
-            }
-            is FfiRestoredFile.Binary -> {
-                buf.putInt(2)
-                FfiConverterString.write(value.`path`, buf)
-                FfiConverterByteArray.write(value.`data`, buf)
-                Unit
-            }
-        }.let { /* this makes the `when` an expression, which ensures it is exhaustive */ }
-    }
-}
-
-
-
-
-
-sealed class FfiStep {
-    
-    /**
-     * Read `len` bytes at `off` from input `input`. Respond with those bytes.
-     */
-    data class Read(
-        val `input`: kotlin.UInt, 
-        val `off`: kotlin.ULong, 
-        val `len`: kotlin.ULong) : FfiStep() {
-        companion object
-    }
-    
-    /**
-     * Read the whole named file at `path`. Respond with its bytes.
-     */
-    data class Fetch(
-        val `path`: kotlin.String) : FfiStep() {
-        companion object
-    }
-    
-    /**
-     * Read `len` bytes at `off` from named file `path`. Respond with those bytes.
-     */
-    data class FetchRange(
-        val `path`: kotlin.String, 
-        val `off`: kotlin.ULong, 
-        val `len`: kotlin.ULong) : FfiStep() {
-        companion object
-    }
-    
-    /**
-     * Append `bytes` to the output sink. Respond with empty bytes.
-     */
-    data class Write(
-        val `bytes`: kotlin.ByteArray) : FfiStep() {
-        companion object
-    }
-    
-    /**
-     * Read already-written output `[from, to)`. Respond with those bytes.
-     */
-    data class OutRead(
-        val `from`: kotlin.ULong, 
-        val `to`: kotlin.ULong) : FfiStep() {
-        companion object
-    }
-    
-    /**
-     * Truncate output to `from`, then append `bytes`. Respond with empty.
-     */
-    data class OutReplace(
-        val `from`: kotlin.ULong, 
-        val `bytes`: kotlin.ByteArray) : FfiStep() {
-        companion object
-    }
-    
-    /**
-     * Overwrite `bytes.len()` bytes at `at` in place. Respond with empty.
-     */
-    data class OutPatch(
-        val `at`: kotlin.ULong, 
-        val `bytes`: kotlin.ByteArray) : FfiStep() {
-        companion object
-    }
-    
-    /**
-     * Write one restored file to disk; `binary=true` → ByteArray, else UTF-8.
-     * Respond with empty bytes.
-     */
-    data class EmitFile(
-        val `path`: kotlin.String, 
-        val `binary`: kotlin.Boolean, 
-        val `bytes`: kotlin.ByteArray) : FfiStep() {
-        companion object
-    }
-    
-    /**
-     * Fetch content-addressed object `id` from store `class`.
-     * Respond with its bytes, or empty if not present.
-     */
-    data class ObjGet(
-        val `class`: kotlin.UInt, 
-        val `id`: kotlin.String) : FfiStep() {
-        companion object
-    }
-    
-    /**
-     * Persist `bytes` as a content-addressed object in store `class`.
-     * Respond with empty bytes.
-     */
-    data class ObjPut(
-        val `class`: kotlin.UInt, 
-        val `bytes`: kotlin.ByteArray) : FfiStep() {
-        companion object
-    }
-    
-    /**
-     * Report the byte length of file at `path`.
-     * Respond with 8 little-endian bytes of the length.
-     */
-    data class FileLen(
-        val `path`: kotlin.String) : FfiStep() {
-        companion object
-    }
-    
-    /**
-     * The algorithm completed successfully.
-     */
-    object Done : FfiStep()
-    
-    
-    /**
-     * The algorithm encountered an error.
-     */
-    data class Err(
-        val `message`: kotlin.String) : FfiStep() {
-        companion object
-    }
-    
-
-    
-    companion object
-}
-
-/**
- * @suppress
- */
-public object FfiConverterTypeFfiStep : FfiConverterRustBuffer<FfiStep>{
-    override fun read(buf: ByteBuffer): FfiStep {
-        return when(buf.getInt()) {
-            1 -> FfiStep.Read(
-                FfiConverterUInt.read(buf),
-                FfiConverterULong.read(buf),
-                FfiConverterULong.read(buf),
-                )
-            2 -> FfiStep.Fetch(
-                FfiConverterString.read(buf),
-                )
-            3 -> FfiStep.FetchRange(
-                FfiConverterString.read(buf),
-                FfiConverterULong.read(buf),
-                FfiConverterULong.read(buf),
-                )
-            4 -> FfiStep.Write(
-                FfiConverterByteArray.read(buf),
-                )
-            5 -> FfiStep.OutRead(
-                FfiConverterULong.read(buf),
-                FfiConverterULong.read(buf),
-                )
-            6 -> FfiStep.OutReplace(
-                FfiConverterULong.read(buf),
-                FfiConverterByteArray.read(buf),
-                )
-            7 -> FfiStep.OutPatch(
-                FfiConverterULong.read(buf),
-                FfiConverterByteArray.read(buf),
-                )
-            8 -> FfiStep.EmitFile(
-                FfiConverterString.read(buf),
-                FfiConverterBoolean.read(buf),
-                FfiConverterByteArray.read(buf),
-                )
-            9 -> FfiStep.ObjGet(
-                FfiConverterUInt.read(buf),
-                FfiConverterString.read(buf),
-                )
-            10 -> FfiStep.ObjPut(
-                FfiConverterUInt.read(buf),
-                FfiConverterByteArray.read(buf),
-                )
-            11 -> FfiStep.FileLen(
-                FfiConverterString.read(buf),
-                )
-            12 -> FfiStep.Done
-            13 -> FfiStep.Err(
-                FfiConverterString.read(buf),
-                )
-            else -> throw RuntimeException("invalid enum value, something is very wrong!!")
-        }
-    }
-
-    override fun allocationSize(value: FfiStep) = when(value) {
-        is FfiStep.Read -> {
-            // Add the size for the Int that specifies the variant plus the size needed for all fields
-            (
-                4UL
-                + FfiConverterUInt.allocationSize(value.`input`)
-                + FfiConverterULong.allocationSize(value.`off`)
-                + FfiConverterULong.allocationSize(value.`len`)
-            )
-        }
-        is FfiStep.Fetch -> {
-            // Add the size for the Int that specifies the variant plus the size needed for all fields
-            (
-                4UL
-                + FfiConverterString.allocationSize(value.`path`)
-            )
-        }
-        is FfiStep.FetchRange -> {
-            // Add the size for the Int that specifies the variant plus the size needed for all fields
-            (
-                4UL
-                + FfiConverterString.allocationSize(value.`path`)
-                + FfiConverterULong.allocationSize(value.`off`)
-                + FfiConverterULong.allocationSize(value.`len`)
-            )
-        }
-        is FfiStep.Write -> {
-            // Add the size for the Int that specifies the variant plus the size needed for all fields
-            (
-                4UL
-                + FfiConverterByteArray.allocationSize(value.`bytes`)
-            )
-        }
-        is FfiStep.OutRead -> {
-            // Add the size for the Int that specifies the variant plus the size needed for all fields
-            (
-                4UL
-                + FfiConverterULong.allocationSize(value.`from`)
-                + FfiConverterULong.allocationSize(value.`to`)
-            )
-        }
-        is FfiStep.OutReplace -> {
-            // Add the size for the Int that specifies the variant plus the size needed for all fields
-            (
-                4UL
-                + FfiConverterULong.allocationSize(value.`from`)
-                + FfiConverterByteArray.allocationSize(value.`bytes`)
-            )
-        }
-        is FfiStep.OutPatch -> {
-            // Add the size for the Int that specifies the variant plus the size needed for all fields
-            (
-                4UL
-                + FfiConverterULong.allocationSize(value.`at`)
-                + FfiConverterByteArray.allocationSize(value.`bytes`)
-            )
-        }
-        is FfiStep.EmitFile -> {
-            // Add the size for the Int that specifies the variant plus the size needed for all fields
-            (
-                4UL
-                + FfiConverterString.allocationSize(value.`path`)
-                + FfiConverterBoolean.allocationSize(value.`binary`)
-                + FfiConverterByteArray.allocationSize(value.`bytes`)
-            )
-        }
-        is FfiStep.ObjGet -> {
-            // Add the size for the Int that specifies the variant plus the size needed for all fields
-            (
-                4UL
-                + FfiConverterUInt.allocationSize(value.`class`)
-                + FfiConverterString.allocationSize(value.`id`)
-            )
-        }
-        is FfiStep.ObjPut -> {
-            // Add the size for the Int that specifies the variant plus the size needed for all fields
-            (
-                4UL
-                + FfiConverterUInt.allocationSize(value.`class`)
-                + FfiConverterByteArray.allocationSize(value.`bytes`)
-            )
-        }
-        is FfiStep.FileLen -> {
-            // Add the size for the Int that specifies the variant plus the size needed for all fields
-            (
-                4UL
-                + FfiConverterString.allocationSize(value.`path`)
-            )
-        }
-        is FfiStep.Done -> {
-            // Add the size for the Int that specifies the variant plus the size needed for all fields
-            (
-                4UL
-            )
-        }
-        is FfiStep.Err -> {
-            // Add the size for the Int that specifies the variant plus the size needed for all fields
-            (
-                4UL
-                + FfiConverterString.allocationSize(value.`message`)
-            )
-        }
-    }
-
-    override fun write(value: FfiStep, buf: ByteBuffer) {
-        when(value) {
-            is FfiStep.Read -> {
-                buf.putInt(1)
-                FfiConverterUInt.write(value.`input`, buf)
-                FfiConverterULong.write(value.`off`, buf)
-                FfiConverterULong.write(value.`len`, buf)
-                Unit
-            }
-            is FfiStep.Fetch -> {
-                buf.putInt(2)
-                FfiConverterString.write(value.`path`, buf)
-                Unit
-            }
-            is FfiStep.FetchRange -> {
-                buf.putInt(3)
-                FfiConverterString.write(value.`path`, buf)
-                FfiConverterULong.write(value.`off`, buf)
-                FfiConverterULong.write(value.`len`, buf)
-                Unit
-            }
-            is FfiStep.Write -> {
-                buf.putInt(4)
-                FfiConverterByteArray.write(value.`bytes`, buf)
-                Unit
-            }
-            is FfiStep.OutRead -> {
-                buf.putInt(5)
-                FfiConverterULong.write(value.`from`, buf)
-                FfiConverterULong.write(value.`to`, buf)
-                Unit
-            }
-            is FfiStep.OutReplace -> {
-                buf.putInt(6)
-                FfiConverterULong.write(value.`from`, buf)
-                FfiConverterByteArray.write(value.`bytes`, buf)
-                Unit
-            }
-            is FfiStep.OutPatch -> {
-                buf.putInt(7)
-                FfiConverterULong.write(value.`at`, buf)
-                FfiConverterByteArray.write(value.`bytes`, buf)
-                Unit
-            }
-            is FfiStep.EmitFile -> {
-                buf.putInt(8)
-                FfiConverterString.write(value.`path`, buf)
-                FfiConverterBoolean.write(value.`binary`, buf)
-                FfiConverterByteArray.write(value.`bytes`, buf)
-                Unit
-            }
-            is FfiStep.ObjGet -> {
-                buf.putInt(9)
-                FfiConverterUInt.write(value.`class`, buf)
-                FfiConverterString.write(value.`id`, buf)
-                Unit
-            }
-            is FfiStep.ObjPut -> {
-                buf.putInt(10)
-                FfiConverterUInt.write(value.`class`, buf)
-                FfiConverterByteArray.write(value.`bytes`, buf)
-                Unit
-            }
-            is FfiStep.FileLen -> {
-                buf.putInt(11)
-                FfiConverterString.write(value.`path`, buf)
-                Unit
-            }
-            is FfiStep.Done -> {
-                buf.putInt(12)
-                Unit
-            }
-            is FfiStep.Err -> {
-                buf.putInt(13)
-                FfiConverterString.write(value.`message`, buf)
-                Unit
-            }
-        }.let { /* this makes the `when` an expression, which ensures it is exhaustive */ }
-    }
-}
-
-
 
 
 
@@ -4461,102 +2637,6 @@ public object FfiConverterOptionalByteArray: FfiConverterRustBuffer<kotlin.ByteA
 /**
  * @suppress
  */
-public object FfiConverterOptionalTypeFfiCommitResult: FfiConverterRustBuffer<FfiCommitResult?> {
-    override fun read(buf: ByteBuffer): FfiCommitResult? {
-        if (buf.get().toInt() == 0) {
-            return null
-        }
-        return FfiConverterTypeFfiCommitResult.read(buf)
-    }
-
-    override fun allocationSize(value: FfiCommitResult?): ULong {
-        if (value == null) {
-            return 1UL
-        } else {
-            return 1UL + FfiConverterTypeFfiCommitResult.allocationSize(value)
-        }
-    }
-
-    override fun write(value: FfiCommitResult?, buf: ByteBuffer) {
-        if (value == null) {
-            buf.put(0)
-        } else {
-            buf.put(1)
-            FfiConverterTypeFfiCommitResult.write(value, buf)
-        }
-    }
-}
-
-
-
-
-/**
- * @suppress
- */
-public object FfiConverterOptionalTypeFfiCommitOutcome: FfiConverterRustBuffer<FfiCommitOutcome?> {
-    override fun read(buf: ByteBuffer): FfiCommitOutcome? {
-        if (buf.get().toInt() == 0) {
-            return null
-        }
-        return FfiConverterTypeFfiCommitOutcome.read(buf)
-    }
-
-    override fun allocationSize(value: FfiCommitOutcome?): ULong {
-        if (value == null) {
-            return 1UL
-        } else {
-            return 1UL + FfiConverterTypeFfiCommitOutcome.allocationSize(value)
-        }
-    }
-
-    override fun write(value: FfiCommitOutcome?, buf: ByteBuffer) {
-        if (value == null) {
-            buf.put(0)
-        } else {
-            buf.put(1)
-            FfiConverterTypeFfiCommitOutcome.write(value, buf)
-        }
-    }
-}
-
-
-
-
-/**
- * @suppress
- */
-public object FfiConverterOptionalTypeFfiRestoredFile: FfiConverterRustBuffer<FfiRestoredFile?> {
-    override fun read(buf: ByteBuffer): FfiRestoredFile? {
-        if (buf.get().toInt() == 0) {
-            return null
-        }
-        return FfiConverterTypeFfiRestoredFile.read(buf)
-    }
-
-    override fun allocationSize(value: FfiRestoredFile?): ULong {
-        if (value == null) {
-            return 1UL
-        } else {
-            return 1UL + FfiConverterTypeFfiRestoredFile.allocationSize(value)
-        }
-    }
-
-    override fun write(value: FfiRestoredFile?, buf: ByteBuffer) {
-        if (value == null) {
-            buf.put(0)
-        } else {
-            buf.put(1)
-            FfiConverterTypeFfiRestoredFile.write(value, buf)
-        }
-    }
-}
-
-
-
-
-/**
- * @suppress
- */
 public object FfiConverterSequenceString: FfiConverterRustBuffer<List<kotlin.String>> {
     override fun read(buf: ByteBuffer): List<kotlin.String> {
         val len = buf.getInt()
@@ -4575,34 +2655,6 @@ public object FfiConverterSequenceString: FfiConverterRustBuffer<List<kotlin.Str
         buf.putInt(value.size)
         value.iterator().forEach {
             FfiConverterString.write(it, buf)
-        }
-    }
-}
-
-
-
-
-/**
- * @suppress
- */
-public object FfiConverterSequenceByteArray: FfiConverterRustBuffer<List<kotlin.ByteArray>> {
-    override fun read(buf: ByteBuffer): List<kotlin.ByteArray> {
-        val len = buf.getInt()
-        return List<kotlin.ByteArray>(len) {
-            FfiConverterByteArray.read(buf)
-        }
-    }
-
-    override fun allocationSize(value: List<kotlin.ByteArray>): ULong {
-        val sizeForLength = 4UL
-        val sizeForItems = value.map { FfiConverterByteArray.allocationSize(it) }.sum()
-        return sizeForLength + sizeForItems
-    }
-
-    override fun write(value: List<kotlin.ByteArray>, buf: ByteBuffer) {
-        buf.putInt(value.size)
-        value.iterator().forEach {
-            FfiConverterByteArray.write(it, buf)
         }
     }
 }
@@ -4709,26 +2761,6 @@ public object FfiConverterSequenceTypeFfiVaultFile: FfiConverterRustBuffer<List<
     
 
         /**
-         * Commit a full vault snapshot against an optional base.
-         *
-         * `entry_json`: JSON-serialized `FsEntry`
-         * (`{"kind":"Dir","path":"","children":[{"kind":"File","path":"note.md","content":"..."}]}`).
-         * `base_bytes`: the current merged RDX state (result of `merge_all`), or `null` for first commit.
-         *
-         * Returns `null` if the vault is unchanged, or `FfiCommitResult` with the new
-         * version ID and the diff bytes to store.
-         */
-    @Throws(TresseException::class) fun `commitVault`(`entryJson`: kotlin.String, `baseBytes`: kotlin.ByteArray?): FfiCommitResult? {
-            return FfiConverterOptionalTypeFfiCommitResult.lift(
-    uniffiRustCallWithError(TresseException) { _status ->
-    UniffiLib.INSTANCE.uniffi_tresse_ffi_fn_func_commit_vault(
-        FfiConverterString.lower(`entryJson`),FfiConverterOptionalByteArray.lower(`baseBytes`),_status)
-}
-    )
-    }
-    
-
-        /**
          * Bootstrap a replica from the remote without committing local files first.
          *
          * This is intentionally pull-only: remote meta is discovered and fetched into
@@ -4755,53 +2787,6 @@ public object FfiConverterSequenceTypeFfiVaultFile: FfiConverterRustBuffer<List<
     uniffiRustCallWithError(TresseException) { _status ->
     UniffiLib.INSTANCE.uniffi_tresse_ffi_fn_func_generate_key(
         _status)
-}
-    )
-    }
-    
-
-        /**
-         * List the version IDs present in a flat RDX diff stream.
-         *
-         * `bytes` may be a single diff or the result of `merge_all`.
-         * Returns version IDs in chronological order as `"llllllll-hhhhhhhh"` labels.
-         */
-    @Throws(TresseException::class) fun `listFlatVersions`(`bytes`: kotlin.ByteArray): List<kotlin.String> {
-            return FfiConverterSequenceString.lift(
-    uniffiRustCallWithError(TresseException) { _status ->
-    UniffiLib.INSTANCE.uniffi_tresse_ffi_fn_func_list_flat_versions(
-        FfiConverterByteArray.lower(`bytes`),_status)
-}
-    )
-    }
-    
-
-        /**
-         * Merge a list of version diffs into one accumulated RDX blob.
-         *
-         * The result can be used as `base_bytes` in subsequent `commit_vault` calls,
-         * or passed to `FfiRestoreIterator.fromMerged`.
-         */
-    @Throws(TresseException::class) fun `mergeAll`(`diffs`: List<kotlin.ByteArray>): kotlin.ByteArray {
-            return FfiConverterByteArray.lift(
-    uniffiRustCallWithError(TresseException) { _status ->
-    UniffiLib.INSTANCE.uniffi_tresse_ffi_fn_func_merge_all(
-        FfiConverterSequenceByteArray.lower(`diffs`),_status)
-}
-    )
-    }
-    
-
-        /**
-         * Compute a bidirectional sync plan from local and remote version ID lists.
-         *
-         * `fetch` = IDs on remote but not locally (pull these from remote).
-         * `push`  = IDs locally but not on remote (upload these to remote).
-         */ fun `planSync`(`localIds`: List<kotlin.String>, `remoteIds`: List<kotlin.String>): FfiSyncPlan {
-            return FfiConverterTypeFfiSyncPlan.lift(
-    uniffiRustCall() { _status ->
-    UniffiLib.INSTANCE.uniffi_tresse_ffi_fn_func_plan_sync(
-        FfiConverterSequenceString.lower(`localIds`),FfiConverterSequenceString.lower(`remoteIds`),_status)
 }
     )
     }
