@@ -9,7 +9,7 @@ variables:
   ANDROID_NDK_VERSION: "27.0.12077973"
   RUST_VERSION: "1.93.1"
   TRESSE_REPOSITORY_URL: "https://gitlab.com/ragusseven/tresse.git"
-  TRESSE_REF: "ff0977c87a105b89cbce1fdc7dd3a00095c9ac0a"
+  TRESSE_REF: "3b5a840d2bcff3f95863d90ee59d61ed9a95ebb9"
 
 cache:
   key: "$CI_COMMIT_REF_SLUG"
