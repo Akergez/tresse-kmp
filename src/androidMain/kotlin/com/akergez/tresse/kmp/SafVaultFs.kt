@@ -2,18 +2,17 @@ package com.akergez.tresse.kmp
 
 import android.content.Context
 import android.net.Uri
+import android.os.ParcelFileDescriptor
 import android.provider.DocumentsContract
 import java.io.FileNotFoundException
+import java.nio.ByteBuffer
 
 class SafVaultFs(context: Context, private val treeUri: Uri) : VaultFs {
     private val resolver = context.applicationContext.contentResolver
     private val rootDocId = DocumentsContract.getTreeDocumentId(treeUri)
         ?: error("Invalid SAF tree URI")
-    private val readCacheLock = Any()
 
     @Volatile private var docIdCache: Map<String, String> = emptyMap()
-    @Volatile private var readCachePath: String? = null
-    @Volatile private var readCacheBytes: ByteArray? = null
 
     override fun list(relDir: String): List<VaultFsEntry> {
         val directory = cleanPath(relDir)
@@ -40,33 +39,35 @@ class SafVaultFs(context: Context, private val treeUri: Uri) : VaultFs {
         return entries
     }
 
+    /**
+     * A true positional read: seek to [offset] through the document's file descriptor and
+     * pull at most [length] bytes. Only the requested range is ever resident, which is what
+     * lets the sync chunk a gigabyte file without carrying it in memory — reading the whole
+     * document and slicing it would defeat the point of asking for a range at all.
+     */
     override fun readRange(relPath: String, offset: Long, length: Int): ByteArray {
         if (length <= 0) return ByteArray(0)
-        val path = cleanPath(relPath)
-        val bytes = readCached(path) ?: return ByteArray(0)
-        val start = offset.coerceIn(0L, bytes.size.toLong()).toInt()
-        val end = (start.toLong() + length).coerceAtMost(bytes.size.toLong()).toInt()
-        return if (start >= end) ByteArray(0) else bytes.copyOfRange(start, end)
-    }
-
-    private fun readCached(path: String): ByteArray? {
-        readCacheBytes?.takeIf { readCachePath == path }?.let { return it }
-        return synchronized(readCacheLock) {
-            readCacheBytes?.takeIf { readCachePath == path } ?: readAllUncached(path)?.also {
-                readCachePath = path
-                readCacheBytes = it
-            }
+        val docId = cachedOrFind(cleanPath(relPath)) ?: return ByteArray(0)
+        return try {
+            resolver.openFileDescriptor(docUri(docId), "r")?.let { descriptor ->
+                ParcelFileDescriptor.AutoCloseInputStream(descriptor).use { input ->
+                    val channel = input.channel
+                    val start = offset.coerceIn(0L, channel.size())
+                    val count = length.toLong().coerceAtMost(channel.size() - start).toInt()
+                    if (count <= 0) return@use ByteArray(0)
+                    val buffer = ByteBuffer.allocate(count)
+                    channel.position(start)
+                    while (buffer.hasRemaining() && channel.read(buffer) >= 0) { /* fill */ }
+                    if (buffer.hasRemaining()) buffer.array().copyOf(buffer.position()) else buffer.array()
+                }
+            } ?: ByteArray(0)
+        } catch (_: FileNotFoundException) {
+            ByteArray(0)
         }
     }
 
     override fun readAll(relPath: String): ByteArray? {
-        val path = cleanPath(relPath)
-        readCacheBytes?.takeIf { readCachePath == path }?.let { return it }
-        return readAllUncached(path)
-    }
-
-    private fun readAllUncached(path: String): ByteArray? {
-        val docId = cachedOrFind(path) ?: return null
+        val docId = cachedOrFind(cleanPath(relPath)) ?: return null
         return try {
             resolver.openInputStream(docUri(docId))?.use { it.readBytes() }
         } catch (_: FileNotFoundException) {
@@ -92,7 +93,6 @@ class SafVaultFs(context: Context, private val treeUri: Uri) : VaultFs {
         resolver.openOutputStream(uri, "rwt")?.use { it.write(bytes) }
             ?: error("Cannot write SAF document: $path")
         docIdCache = docIdCache + (path to DocumentsContract.getDocumentId(uri))
-        clearReadCache(path)
     }
 
     override fun delete(relPath: String) {
@@ -104,17 +104,6 @@ class SafVaultFs(context: Context, private val treeUri: Uri) : VaultFs {
             // Already gone.
         }
         docIdCache = docIdCache - path
-        clearReadCache(path)
-    }
-
-    private fun clearReadCache(path: String) {
-        if (readCachePath != path) return
-        synchronized(readCacheLock) {
-            if (readCachePath == path) {
-                readCachePath = null
-                readCacheBytes = null
-            }
-        }
     }
 
     private fun cachedOrFind(path: String): String? = docIdCache[path] ?: traverseToFind(path)
@@ -185,8 +174,17 @@ class SafVaultFs(context: Context, private val treeUri: Uri) : VaultFs {
     }
 }
 
+/**
+ * The vault compiles the ignore patterns itself. Hosts hand over the patterns and
+ * nothing else — not the config they came from, which carries tokens and keys a
+ * directory walk has no business seeing, and not a predicate, which would make the
+ * host decide whether a path is a directory. Only the walk knows that.
+ */
 fun safTresseVault(
     context: Context,
     treeUri: Uri,
-    isIgnored: (String) -> Boolean = { false },
-): TresseVault = DirectoryVault(SafVaultFs(context, treeUri), isIgnored)
+    ignorePatterns: List<String> = emptyList(),
+): TresseVault = DirectoryVault(
+    SafVaultFs(context, treeUri),
+    ignorePatterns.takeIf { it.isNotEmpty() }?.let(::TresseIgnore),
+)

@@ -56,5 +56,11 @@ class FileVaultFs(private val root: File) : VaultFs {
     }
 }
 
-fun fileTresseVault(root: File, isIgnored: (String) -> Boolean = { false }): TresseVault =
-    DirectoryVault(FileVaultFs(root), isIgnored)
+/**
+ * The vault compiles the ignore patterns itself. Hosts hand over the patterns and
+ * nothing else — not the config they came from, which carries tokens and keys a
+ * directory walk has no business seeing, and not a predicate, which would make the
+ * host decide whether a path is a directory. Only the walk knows that.
+ */
+fun fileTresseVault(root: File, ignorePatterns: List<String> = emptyList()): TresseVault =
+    DirectoryVault(FileVaultFs(root), ignorePatterns.takeIf { it.isNotEmpty() }?.let(::TresseIgnore))

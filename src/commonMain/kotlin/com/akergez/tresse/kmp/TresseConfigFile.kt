@@ -5,8 +5,16 @@ object TresseConfigFile {
     const val PATH = "tresse.toml"
     const val REMOTES_PATH = ".tresse/remotes.toml"
 
+    /**
+     * Both files are fetched by name, not found by walking. [PATH] is a tracked file
+     * and [REMOTES_PATH] is not, but that distinction says nothing about how to read
+     * them: it decides what the sync carries, not what a byte fetch is allowed to
+     * touch. Reading the config through the tracked-file walk cost a full recursive
+     * listing of the vault to learn one file's size — free on a local filesystem,
+     * thousands of cross-process queries over Android's SAF, on every startup.
+     */
     fun read(vault: TresseVault): TresseConfig? {
-        val shared = readTrackedFile(vault, PATH) ?: return null
+        val shared = vault.storeRead(PATH) ?: return null
         val remotes = vault.storeRead(REMOTES_PATH)?.decodeToString().orEmpty()
         return parse(shared.decodeToString(), remotes)
     }
@@ -14,12 +22,6 @@ object TresseConfigFile {
     fun write(vault: TresseVault, config: TresseConfig) {
         vault.writeText(PATH, serialize(config))
         vault.storeWrite(REMOTES_PATH, serializeRemotes(config).encodeToByteArray())
-    }
-
-    private fun readTrackedFile(vault: TresseVault, path: String): ByteArray? {
-        val file = vault.listFiles().firstOrNull { it.path == path } ?: return null
-        require(file.size <= Int.MAX_VALUE) { "Config file is too large: $path" }
-        return vault.read(path, 0, file.size.toInt())
     }
 
     fun serialize(config: TresseConfig): String = buildString {

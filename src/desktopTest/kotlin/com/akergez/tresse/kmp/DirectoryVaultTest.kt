@@ -26,12 +26,61 @@ class DirectoryVaultTest {
         }
     }
 
+    /**
+     * A hidden directory that the patterns re-include has to survive the walk. The
+     * re-inclusion is directory-only, so it only fires if the walker reports what it
+     * actually found; a walker that calls everything a file prunes the directory and
+     * never reaches the files the patterns were written to keep.
+     */
+    @Test
+    fun walkHonoursDirectoryOnlyPatterns() {
+        val rootPath = createTempDirectory(prefix = "tresse-dir-pattern-test-")
+        val root = File(rootPath.pathString)
+        try {
+            run {
+                val patterns = listOf(".*", "!/.obsidian/", "!/.obsidian/**", "/.obsidian/cache")
+                val vault = fileTresseVault(root, patterns)
+
+                File(root, ".obsidian").mkdirs()
+                File(root, ".obsidian/appearance.json").writeText("{}")
+                File(root, ".obsidian/cache").writeText("stale")
+                File(root, ".git").mkdirs()
+                File(root, ".git/HEAD").writeText("ref")
+                File(root, "notes").mkdirs()
+                File(root, "notes/a.md").writeText("hello")
+
+                assertEquals(
+                    listOf(".obsidian/appearance.json", "notes/a.md"),
+                    vault.listFiles().map { it.path },
+                )
+            }
+        } finally {
+            root.deleteRecursively()
+        }
+    }
+
+    /** Reading the config must not depend on the walk, nor on what the walk hides. */
+    @Test
+    fun configIsReadableEvenWhenEverythingIsIgnored() {
+        val rootPath = createTempDirectory(prefix = "tresse-config-hidden-test-")
+        val root = File(rootPath.pathString)
+        try {
+            TresseConfigFile.write(fileTresseVault(root), TresseConfig(repoId = "notes"))
+            val vault = fileTresseVault(root, listOf("**"))
+
+            assertEquals("notes", TresseConfigFile.read(vault)?.repoId)
+            assertEquals(emptyList(), vault.listFiles().map { it.path })
+        } finally {
+            root.deleteRecursively()
+        }
+    }
+
     @Test
     fun fileVaultRoundTripsAndPrunesInternalAndIgnoredTrees() {
         val rootPath = createTempDirectory(prefix = "tresse-vault-test-")
         val root = File(rootPath.pathString)
         try {
-            val vault = fileTresseVault(root) { it == "ignored" || it.startsWith("ignored/") }
+            val vault = fileTresseVault(root, listOf("/ignored"))
 
             vault.writeText("notes/a.md", "hello")
             vault.writeBinary("bin/image.bin", byteArrayOf(1, 2, 3, 4, 5))

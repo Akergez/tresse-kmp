@@ -15,15 +15,28 @@ interface VaultFs {
     fun delete(relPath: String)
 }
 
+/**
+ * Takes the ignore rules themselves, not a predicate to ask. Whether a path is a
+ * directory is something only the walker knows, and it matters — a trailing slash
+ * makes a pattern directory-only, so a caller that guessed "file" would silently drop
+ * every such rule, re-inclusions included. Handing that decision to the host was a
+ * standing invitation to get it wrong, and it was taken.
+ *
+ * A null [ignore] means no rules at all, which is not the same as ignoring nothing by
+ * policy: it is what the config-reading path uses, where no config has been read yet.
+ */
 class DirectoryVault(
     private val fs: VaultFs,
-    private val isIgnored: (String) -> Boolean = { false },
+    private val ignore: TresseIgnore? = null,
 ) : TresseVault {
+    private fun isIgnored(path: String, isDir: Boolean): Boolean =
+        ignore?.isIgnored(path, isDir) ?: false
+
     override fun listFiles(): List<TresseFile> = buildList {
         fun walk(directory: String) {
             fs.list(directory).forEach { entry ->
                 val path = joinPath(directory, entry.name)
-                if (path == ".tresse" || path.startsWith(".tresse/") || isIgnored(path)) return@forEach
+                if (path == ".tresse" || path.startsWith(".tresse/") || isIgnored(path, entry.isDir)) return@forEach
                 if (entry.isDir) {
                     walk(path)
                 } else {
@@ -37,15 +50,16 @@ class DirectoryVault(
     override fun read(path: String, offset: Long, length: Int): ByteArray =
         fs.readRange(cleanPath(path), offset, length)
 
+    // Both sides of a sync address files, never directories, hence the fixed `false`.
     override fun writeBinary(path: String, bytes: ByteArray) {
         val relPath = cleanPath(path)
-        if (relPath == ".tresse" || relPath.startsWith(".tresse/") || isIgnored(relPath)) return
+        if (relPath == ".tresse" || relPath.startsWith(".tresse/") || isIgnored(relPath, false)) return
         fs.write(relPath, bytes)
     }
 
     override fun delete(path: String) {
         val relPath = cleanPath(path)
-        if (relPath == ".tresse" || relPath.startsWith(".tresse/") || isIgnored(relPath)) return
+        if (relPath == ".tresse" || relPath.startsWith(".tresse/") || isIgnored(relPath, false)) return
         fs.delete(relPath)
     }
 
