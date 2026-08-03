@@ -59,14 +59,35 @@ internal class VaultSource(
     override fun len(path: String): ULong =
         files.firstOrNull { it.path == path }?.size?.coerceAtLeast(0)?.toULong() ?: 0u
 
+    /**
+     * The commit engine asks only for ranges it has already sized through [len], so it is
+     * entitled to every byte it asks for and treats anything less as a corrupt working
+     * tree. Swallowing a failure into an empty array therefore does not degrade the read —
+     * it relabels the real fault as a length mismatch, which is why a failing sync used to
+     * report a truncated file no matter what actually went wrong. Both the failure and the
+     * mismatch are raised here instead, carrying the file, the window, and the size the
+     * listing promised, so the log names the cause rather than its disguise.
+     */
     override fun read(path: String, offset: ULong, len: ULong): ByteArray {
         // Count one read per file, at its first range. Counting in len() double-counts:
         // the commit engine sizes a text file up to twice per pass. A file's content is
         // actually pulled starting at offset 0 exactly once.
         if (offset == 0uL) progress?.reportCommitRead()
-        return runCatching {
-            vault.read(path, offset.toLong(), len.coerceAtMost(Int.MAX_VALUE.toULong()).toInt())
-        }.getOrDefault(ByteArray(0))
+        val wanted = len.coerceAtMost(Int.MAX_VALUE.toULong()).toInt()
+        val bytes = try {
+            vault.read(path, offset.toLong(), wanted)
+        } catch (error: Throwable) {
+            throw TresseException.General(
+                "reading $path at $offset (+$wanted) failed: ${error::class.simpleName}: ${error.message}",
+            )
+        }
+        if (bytes.size != wanted) {
+            val listed = files.firstOrNull { it.path == path }?.size
+            throw TresseException.General(
+                "short read of $path at $offset: asked $wanted, got ${bytes.size}, listing said size=$listed",
+            )
+        }
+        return bytes
     }
 }
 
