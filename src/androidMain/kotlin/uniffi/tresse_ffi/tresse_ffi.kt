@@ -890,6 +890,8 @@ internal open class UniffiVTableCallbackInterfaceFfiVaultSource(
 
 
 
+
+
 // For large crates we prevent `MethodTooLargeException` (see #2340)
 // N.B. the name of the extension is very misleading, since it is 
 // rather `InterfaceTooLargeException`, caused by too many methods 
@@ -906,6 +908,8 @@ internal open class UniffiVTableCallbackInterfaceFfiVaultSource(
 internal interface IntegrityCheckingUniffiLib : Library {
     // Integrity check functions only
     fun uniffi_tresse_ffi_checksum_func_cas_sync(
+): Short
+fun uniffi_tresse_ffi_checksum_func_file_index_path(
 ): Short
 fun uniffi_tresse_ffi_checksum_func_force_pull(
 ): Short
@@ -1027,6 +1031,8 @@ fun uniffi_tresse_ffi_fn_init_callback_vtable_ffirestoresink(`vtable`: UniffiVTa
 fun uniffi_tresse_ffi_fn_init_callback_vtable_ffivaultsource(`vtable`: UniffiVTableCallbackInterfaceFfiVaultSource,
 ): Unit
 fun uniffi_tresse_ffi_fn_func_cas_sync(`encryptionKeyB64`: RustBuffer.ByValue,`fileIndexJson`: RustBuffer.ByValue,`local`: Long,`remote`: Long,`source`: Long,`sink`: Long,uniffi_out_err: UniffiRustCallStatus, 
+): RustBuffer.ByValue
+fun uniffi_tresse_ffi_fn_func_file_index_path(uniffi_out_err: UniffiRustCallStatus, 
 ): RustBuffer.ByValue
 fun uniffi_tresse_ffi_fn_func_force_pull(`encryptionKeyB64`: RustBuffer.ByValue,`local`: Long,`remote`: Long,`source`: Long,`sink`: Long,uniffi_out_err: UniffiRustCallStatus, 
 ): RustBuffer.ByValue
@@ -1169,6 +1175,9 @@ private fun uniffiCheckContractApiVersion(lib: IntegrityCheckingUniffiLib) {
 @Suppress("UNUSED_PARAMETER")
 private fun uniffiCheckApiChecksums(lib: IntegrityCheckingUniffiLib) {
     if (lib.uniffi_tresse_ffi_checksum_func_cas_sync() != 44339.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_tresse_ffi_checksum_func_file_index_path() != 39068.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_tresse_ffi_checksum_func_force_pull() != 12734.toShort()) {
@@ -1951,7 +1960,7 @@ data class FfiSyncOutcome (
      */
     var `removed`: kotlin.UInt, 
     /**
-     * Updated local-only `.tresse/file-index.json` payload.
+     * Updated local-only file-index payload; store it at [`file_index_path`].
      */
     var `fileIndexJson`: kotlin.String
 ) {
@@ -2755,6 +2764,22 @@ public object FfiConverterSequenceTypeFfiVaultFile: FfiConverterRustBuffer<List<
     uniffiRustCallWithError(TresseException) { _status ->
     UniffiLib.INSTANCE.uniffi_tresse_ffi_fn_func_cas_sync(
         FfiConverterString.lower(`encryptionKeyB64`),FfiConverterOptionalString.lower(`fileIndexJson`),FfiConverterTypeFfiObjectStore.lower(`local`),FfiConverterTypeFfiRemoteKv.lower(`remote`),FfiConverterTypeFfiVaultSource.lower(`source`),FfiConverterTypeFfiRestoreSink.lower(`sink`),_status)
+}
+    )
+    }
+    
+
+        /**
+         * Куда класть `file_index_json` внутри рабочей директории.
+         *
+         * Имя принадлежит домену, а не хосту: на одном устройстве CLI, плагин и
+         * Android работают с одним файлом, и разойтись в пути значит потерять
+         * оптимизацию у всех троих — каждый перечитает то, что уже прочитал сосед.
+         */ fun `fileIndexPath`(): kotlin.String {
+            return FfiConverterString.lift(
+    uniffiRustCall() { _status ->
+    UniffiLib.INSTANCE.uniffi_tresse_ffi_fn_func_file_index_path(
+        _status)
 }
     )
     }

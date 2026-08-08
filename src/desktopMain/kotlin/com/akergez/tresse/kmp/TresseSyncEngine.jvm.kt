@@ -6,6 +6,7 @@ import uniffi.tresse_ffi.FfiRestoreSink
 import uniffi.tresse_ffi.FfiVaultFile
 import uniffi.tresse_ffi.FfiVaultSource
 import uniffi.tresse_ffi.TresseException
+import uniffi.tresse_ffi.fileIndexPath
 
 /** Compile this transaction's ignore rules; see [TresseIgnore]. Owns a native handle. */
 internal fun ignoreRulesOf(config: TresseConfig): TresseIgnore =
@@ -136,8 +137,13 @@ internal class VaultSink(
  * content id (the Rust side derives and verifies the id).
  */
 internal class VaultObjectStore(private val vault: TresseVault) : FfiObjectStore {
-    fun readIndex(): String? = vault.storeRead(".tresse/file-index.json")?.decodeToString()
-    fun writeIndex(value: String) = vault.storeWrite(".tresse/file-index.json", value.encodeToByteArray())
+    // Путь индекса объявляет домен, а не хост: на одном устройстве с этим же
+    // файлом работают CLI и плагин Obsidian, и разойтись в имени значит
+    // потерять оптимизацию у всех — каждый перечитает то, что уже прочитал сосед.
+    private val indexPath = fileIndexPath()
+
+    fun readIndex(): String? = vault.storeRead(indexPath)?.decodeToString()
+    fun writeIndex(value: String) = vault.storeWrite(indexPath, value.encodeToByteArray())
 
     override fun list(`class`: String): List<String> = try {
         vault.storeList(".tresse/$`class`")

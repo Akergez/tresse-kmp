@@ -8,8 +8,9 @@ variables:
   ANDROID_HOME: "$CI_PROJECT_DIR/.android-sdk"
   ANDROID_NDK_VERSION: "27.0.12077973"
   RUST_VERSION: "1.93.1"
+  CARGO_XWIN_VERSION: "0.23.0"
   TRESSE_REPOSITORY_URL: "https://gitlab.com/ragusseven/tresse.git"
-  TRESSE_REF: "3b5a840d2bcff3f95863d90ee59d61ed9a95ebb9"
+  TRESSE_REF: "ea091d73e50d42a80e4ac2c183c530821b18fef1"
 
 cache:
   key: "$CI_COMMIT_REF_SLUG"
@@ -42,19 +43,24 @@ native:linux-x86_64:
 
 native:linux-aarch64:
   stage: native
-  image: rust:1.93.1-bookworm
-  tags:
-    - saas-linux-small-arm64
+  # Build on the x86_64 runner with Debian's GNU cross-toolchain. Bullseye keeps
+  # the resulting library compatible with glibc 2.31 and newer.
+  image: rust:1.93.1-bullseye
+  variables:
+    CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER: "aarch64-linux-gnu-gcc"
+    CC_aarch64_unknown_linux_gnu: "aarch64-linux-gnu-gcc"
+    AR_aarch64_unknown_linux_gnu: "aarch64-linux-gnu-ar"
   before_script:
-    - apt-get update && apt-get install -y git
+    - apt-get update && apt-get install -y --no-install-recommends git gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu libc6-dev-arm64-cross
+    - rustup target add aarch64-unknown-linux-gnu
     - mkdir -p .deps
     - git clone "$TRESSE_REPOSITORY_URL" .deps/tresse
     - git -C .deps/tresse checkout "$TRESSE_REF"
     - test "$(git -C .deps/tresse rev-parse HEAD)" = "$TRESSE_REF"
   script:
-    - cargo build --manifest-path .deps/tresse/Cargo.toml --release -p tresse-ffi
+    - cargo build --manifest-path .deps/tresse/Cargo.toml --release --target aarch64-unknown-linux-gnu -p tresse-ffi
     - mkdir -p .native/native/linux-aarch64
-    - cp .deps/tresse/target/release/libtresse_ffi.so .native/native/linux-aarch64/
+    - cp .deps/tresse/target/aarch64-unknown-linux-gnu/release/libtresse_ffi.so .native/native/linux-aarch64/
   artifacts:
     paths:
       - .native/native/linux-aarch64/libtresse_ffi.so
@@ -80,25 +86,36 @@ native:macos-arm64:
       - .native/native/macos-aarch64/libtresse_ffi.dylib
   <<: *release_rules
 
-# PowerShell runner, so the whole job reads differently from its POSIX siblings.
-# `before_script` and `script` share one shell, hence the single PATH assignment.
-# MSVC comes with the runner image; only rustup has to be fetched.
+# The JVM library itself is platform-independent. Only its bundled tresse_ffi.dll
+# needs a Windows target, and cargo-xwin can cross-compile that MSVC DLL on Linux
+# using Microsoft's redistributable CRT and SDK files.
 native:windows-x86_64:
   stage: native
-  tags:
-    - saas-windows-medium-amd64
+  image: rust:1.93.1-bookworm
+  cache:
+    key: "windows-x86_64-$CI_COMMIT_REF_SLUG"
+    paths:
+      - .cargo/bin
+      - .cargo/registry
+      - .xwin-cache
+    policy: pull-push
+  variables:
+    CARGO_HOME: "$CI_PROJECT_DIR/.cargo"
+    XWIN_CACHE_DIR: "$CI_PROJECT_DIR/.xwin-cache"
   before_script:
-    - git clone "$env:TRESSE_REPOSITORY_URL" .deps/tresse
-    - git -C .deps/tresse checkout "$env:TRESSE_REF"
-    - if ((git -C .deps/tresse rev-parse HEAD) -ne $env:TRESSE_REF) { throw "TRESSE_REF checkout mismatch" }
-    - Invoke-WebRequest -Uri https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe -OutFile rustup-init.exe
-    - .\rustup-init.exe -y --profile minimal --default-toolchain "$env:RUST_VERSION" --default-host x86_64-pc-windows-msvc
-    - $env:PATH = "$env:USERPROFILE\.cargo\bin;$env:PATH"
+    # `llvm` provides llvm-lib, which cc-rs needs for blake3's Windows SIMD objects.
+    - apt-get update && apt-get install -y --no-install-recommends git clang lld llvm
+    - mkdir -p .deps
+    - git clone "$TRESSE_REPOSITORY_URL" .deps/tresse
+    - git -C .deps/tresse checkout "$TRESSE_REF"
+    - test "$(git -C .deps/tresse rev-parse HEAD)" = "$TRESSE_REF"
+    - rustup target add x86_64-pc-windows-msvc
+    - cargo install cargo-xwin --version "$CARGO_XWIN_VERSION" --locked
   script:
-    - cargo build --manifest-path .deps/tresse/Cargo.toml --release -p tresse-ffi
-    - New-Item -ItemType Directory -Force -Path .native\native\windows-x86_64
+    - cargo xwin build --manifest-path .deps/tresse/Cargo.toml --release --target x86_64-pc-windows-msvc -p tresse-ffi
+    - mkdir -p .native/native/windows-x86_64
     # No `lib` prefix on Windows; `System.mapLibraryName` in TresseNative expects exactly this.
-    - Copy-Item .deps\tresse\target\release\tresse_ffi.dll .native\native\windows-x86_64\
+    - cp .deps/tresse/target/x86_64-pc-windows-msvc/release/tresse_ffi.dll .native/native/windows-x86_64/
   artifacts:
     paths:
       - .native/native/windows-x86_64/tresse_ffi.dll
