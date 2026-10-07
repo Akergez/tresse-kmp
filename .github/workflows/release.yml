@@ -1,0 +1,268 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+      - "v[0-9]+.[0-9]+.[0-9]+.*"
+      - "v[0-9]+.[0-9]+.[0-9]+-*"
+
+permissions:
+  contents: read
+
+env:
+  GRADLE_VERSION: "9.2.1"
+  ANDROID_NDK_VERSION: "27.0.12077973"
+  RUST_VERSION: "1.93.1"
+  CARGO_XWIN_VERSION: "0.23.0"
+  CARGO_NDK_VERSION: "4.1.2"
+  TRESSE_REPOSITORY_URL: "https://gitlab.com/ragusseven/tresse.git"
+  TRESSE_REF: "04a68edc19e9212ff4311a54f80a115b6a7423ff"
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  native-linux-x86_64:
+    runs-on: ubuntu-latest
+    container: rust:1.93.1-bookworm
+    steps:
+      - uses: actions/checkout@v5
+      - name: Fetch tresse
+        run: |
+          mkdir -p .deps
+          git clone "$TRESSE_REPOSITORY_URL" .deps/tresse
+          git -C .deps/tresse checkout "$TRESSE_REF"
+          test "$(git -C .deps/tresse rev-parse HEAD)" = "$TRESSE_REF"
+      - name: Build
+        run: |
+          cargo build --manifest-path .deps/tresse/Cargo.toml --release -p tresse-ffi
+          mkdir -p .native/native/linux-x86_64
+          cp .deps/tresse/target/release/libtresse_ffi.so .native/native/linux-x86_64/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: native-linux-x86_64
+          path: .native/native/linux-x86_64/libtresse_ffi.so
+          include-hidden-files: true
+          if-no-files-found: error
+
+  native-linux-aarch64:
+    runs-on: ubuntu-latest
+    # Build on the x86_64 runner with Debian's GNU cross-toolchain. Bullseye keeps
+    # the resulting library compatible with glibc 2.31 and newer.
+    container: rust:1.93.1-bullseye
+    env:
+      CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER: "aarch64-linux-gnu-gcc"
+      CC_aarch64_unknown_linux_gnu: "aarch64-linux-gnu-gcc"
+      AR_aarch64_unknown_linux_gnu: "aarch64-linux-gnu-ar"
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install cross-toolchain
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends git gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu libc6-dev-arm64-cross
+          rustup target add aarch64-unknown-linux-gnu
+      - name: Fetch tresse
+        run: |
+          mkdir -p .deps
+          git clone "$TRESSE_REPOSITORY_URL" .deps/tresse
+          git -C .deps/tresse checkout "$TRESSE_REF"
+          test "$(git -C .deps/tresse rev-parse HEAD)" = "$TRESSE_REF"
+      - name: Build
+        run: |
+          cargo build --manifest-path .deps/tresse/Cargo.toml --release --target aarch64-unknown-linux-gnu -p tresse-ffi
+          mkdir -p .native/native/linux-aarch64
+          cp .deps/tresse/target/aarch64-unknown-linux-gnu/release/libtresse_ffi.so .native/native/linux-aarch64/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: native-linux-aarch64
+          path: .native/native/linux-aarch64/libtresse_ffi.so
+          include-hidden-files: true
+          if-no-files-found: error
+
+  native-macos-arm64:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v5
+      - name: Fetch tresse
+        run: |
+          mkdir -p .deps
+          git clone "$TRESSE_REPOSITORY_URL" .deps/tresse
+          git -C .deps/tresse checkout "$TRESSE_REF"
+          test "$(git -C .deps/tresse rev-parse HEAD)" = "$TRESSE_REF"
+      - name: Install Rust
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain "$RUST_VERSION"
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+      - name: Build
+        env:
+          RUSTUP_TOOLCHAIN: ${{ env.RUST_VERSION }}
+        run: |
+          test "$(uname -m)" = "arm64"
+          cargo build --manifest-path .deps/tresse/Cargo.toml --release -p tresse-ffi
+          mkdir -p .native/native/macos-aarch64
+          cp .deps/tresse/target/release/libtresse_ffi.dylib .native/native/macos-aarch64/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: native-macos-aarch64
+          path: .native/native/macos-aarch64/libtresse_ffi.dylib
+          include-hidden-files: true
+          if-no-files-found: error
+
+  # The JVM library itself is platform-independent. Only its bundled tresse_ffi.dll
+  # needs a Windows target, and cargo-xwin can cross-compile that MSVC DLL on Linux
+  # using Microsoft's redistributable CRT and SDK files.
+  native-windows-x86_64:
+    runs-on: ubuntu-latest
+    container: rust:1.93.1-bookworm
+    steps:
+      - uses: actions/checkout@v5
+      - name: Configure cargo and xwin dirs
+        # `github.workspace` is the host path inside a container job, so derive
+        # these from $GITHUB_WORKSPACE instead of a job-level `env`.
+        run: |
+          echo "CARGO_HOME=$GITHUB_WORKSPACE/.cargo" >> "$GITHUB_ENV"
+          echo "XWIN_CACHE_DIR=$GITHUB_WORKSPACE/.xwin-cache" >> "$GITHUB_ENV"
+      - uses: actions/cache@v4
+        with:
+          key: windows-x86_64-${{ env.RUST_VERSION }}-xwin-${{ env.CARGO_XWIN_VERSION }}-${{ env.TRESSE_REF }}
+          restore-keys: |
+            windows-x86_64-${{ env.RUST_VERSION }}-xwin-${{ env.CARGO_XWIN_VERSION }}-
+          path: |
+            .cargo/bin
+            .cargo/.crates.toml
+            .cargo/.crates2.json
+            .cargo/registry
+            .xwin-cache
+      - name: Install toolchain
+        # `llvm` provides llvm-lib, which cc-rs needs for blake3's Windows SIMD objects.
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends git clang lld llvm
+          rustup target add x86_64-pc-windows-msvc
+          cargo install cargo-xwin --version "$CARGO_XWIN_VERSION" --locked
+      - name: Fetch tresse
+        run: |
+          mkdir -p .deps
+          git clone "$TRESSE_REPOSITORY_URL" .deps/tresse
+          git -C .deps/tresse checkout "$TRESSE_REF"
+          test "$(git -C .deps/tresse rev-parse HEAD)" = "$TRESSE_REF"
+      - name: Build
+        run: |
+          cargo xwin build --manifest-path .deps/tresse/Cargo.toml --release --target x86_64-pc-windows-msvc -p tresse-ffi
+          mkdir -p .native/native/windows-x86_64
+          # No `lib` prefix on Windows; `System.mapLibraryName` in TresseNative expects exactly this.
+          cp .deps/tresse/target/x86_64-pc-windows-msvc/release/tresse_ffi.dll .native/native/windows-x86_64/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: native-windows-x86_64
+          path: .native/native/windows-x86_64/tresse_ffi.dll
+          include-hidden-files: true
+          if-no-files-found: error
+
+  native-android:
+    runs-on: ubuntu-latest
+    container: rust:1.93.1-bookworm
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install Android NDK
+        run: |
+          export ANDROID_HOME="$GITHUB_WORKSPACE/.android-sdk"
+          echo "ANDROID_HOME=$ANDROID_HOME" >> "$GITHUB_ENV"
+          apt-get update
+          apt-get install -y git wget unzip openjdk-17-jre-headless
+          mkdir -p "$ANDROID_HOME/cmdline-tools"
+          wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O cmdline-tools.zip
+          unzip -q cmdline-tools.zip -d "$ANDROID_HOME/cmdline-tools"
+          mv "$ANDROID_HOME/cmdline-tools/cmdline-tools" "$ANDROID_HOME/cmdline-tools/latest"
+          export PATH="$PATH:$ANDROID_HOME/cmdline-tools/latest/bin"
+          yes | sdkmanager --licenses || true
+          sdkmanager "ndk;$ANDROID_NDK_VERSION"
+      - name: Install Rust targets
+        run: |
+          rustup target add aarch64-linux-android armv7-linux-androideabi x86_64-linux-android
+          cargo install cargo-ndk --version "$CARGO_NDK_VERSION" --locked
+      - name: Fetch tresse
+        run: |
+          mkdir -p .deps
+          git clone "$TRESSE_REPOSITORY_URL" .deps/tresse
+          git -C .deps/tresse checkout "$TRESSE_REF"
+          test "$(git -C .deps/tresse rev-parse HEAD)" = "$TRESSE_REF"
+      - name: Build
+        run: |
+          export ANDROID_NDK_HOME="$ANDROID_HOME/ndk/$ANDROID_NDK_VERSION"
+          # Drop the checked-in libraries so the artifact can only hold fresh ones.
+          rm -rf src/androidMain/jniLibs
+          cd .deps/tresse
+          cargo ndk -t arm64-v8a -t armeabi-v7a -t x86_64 -o "$GITHUB_WORKSPACE/src/androidMain/jniLibs" build --release -p tresse-ffi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: native-android
+          path: |
+            src/androidMain/jniLibs/arm64-v8a/libtresse_ffi.so
+            src/androidMain/jniLibs/armeabi-v7a/libtresse_ffi.so
+            src/androidMain/jniLibs/x86_64/libtresse_ffi.so
+          if-no-files-found: error
+
+  publish-maven:
+    runs-on: ubuntu-latest
+    needs:
+      - native-linux-x86_64
+      - native-linux-aarch64
+      - native-macos-arm64
+      - native-windows-x86_64
+      - native-android
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "21"
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: ${{ env.GRADLE_VERSION }}
+      - name: Install Android SDK components
+        run: |
+          export PATH="$PATH:$ANDROID_HOME/cmdline-tools/latest/bin"
+          yes | sdkmanager --licenses || true
+          sdkmanager "platforms;android-36" "build-tools;36.0.0"
+      # upload-artifact strips the common parent directory, so every artifact
+      # is restored into the directory its file was built in.
+      - uses: actions/download-artifact@v4
+        with:
+          name: native-linux-x86_64
+          path: .native/native/linux-x86_64
+      - uses: actions/download-artifact@v4
+        with:
+          name: native-linux-aarch64
+          path: .native/native/linux-aarch64
+      - uses: actions/download-artifact@v4
+        with:
+          name: native-macos-aarch64
+          path: .native/native/macos-aarch64
+      - uses: actions/download-artifact@v4
+        with:
+          name: native-windows-x86_64
+          path: .native/native/windows-x86_64
+      - name: Drop checked-in Android libraries
+        run: rm -rf src/androidMain/jniLibs
+      - uses: actions/download-artifact@v4
+        with:
+          name: native-android
+          path: src/androidMain/jniLibs
+      - name: Publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          test -f .native/native/linux-x86_64/libtresse_ffi.so
+          test -f .native/native/linux-aarch64/libtresse_ffi.so
+          test -f .native/native/macos-aarch64/libtresse_ffi.dylib
+          test -f .native/native/windows-x86_64/tresse_ffi.dll
+          test -f src/androidMain/jniLibs/arm64-v8a/libtresse_ffi.so
+          test -f src/androidMain/jniLibs/armeabi-v7a/libtresse_ffi.so
+          test -f src/androidMain/jniLibs/x86_64/libtresse_ffi.so
+          TRESSE_PREBUILT_NATIVE_DIR="$GITHUB_WORKSPACE/.native" gradle --no-daemon publishKotlinMultiplatformPublicationToGitHubPackagesRepository publishAndroidReleasePublicationToGitHubPackagesRepository publishDesktopPublicationToGitHubPackagesRepository

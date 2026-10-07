@@ -678,6 +678,15 @@ internal interface UniffiCallbackInterfaceFfiRemoteKvMethod2 : com.sun.jna.Callb
 internal interface UniffiCallbackInterfaceFfiRemoteKvMethod3 : com.sun.jna.Callback {
     fun callback(`uniffiHandle`: Long,`key`: RustBuffer.ByValue,`uniffiOutReturn`: Pointer,uniffiCallStatus: UniffiRustCallStatus,)
 }
+internal interface UniffiCallbackInterfaceFfiRepoFilesMethod0 : com.sun.jna.Callback {
+    fun callback(`uniffiHandle`: Long,`path`: RustBuffer.ByValue,`uniffiOutReturn`: RustBuffer,uniffiCallStatus: UniffiRustCallStatus,)
+}
+internal interface UniffiCallbackInterfaceFfiRepoFilesMethod1 : com.sun.jna.Callback {
+    fun callback(`uniffiHandle`: Long,`path`: RustBuffer.ByValue,`bytes`: RustBuffer.ByValue,`uniffiOutReturn`: Pointer,uniffiCallStatus: UniffiRustCallStatus,)
+}
+internal interface UniffiCallbackInterfaceFfiRepoFilesMethod2 : com.sun.jna.Callback {
+    fun callback(`uniffiHandle`: Long,`path`: RustBuffer.ByValue,`uniffiOutReturn`: Pointer,uniffiCallStatus: UniffiRustCallStatus,)
+}
 internal interface UniffiCallbackInterfaceFfiRestoreSinkMethod0 : com.sun.jna.Callback {
     fun callback(`uniffiHandle`: Long,`path`: RustBuffer.ByValue,`content`: RustBuffer.ByValue,`uniffiOutReturn`: Pointer,uniffiCallStatus: UniffiRustCallStatus,)
 }
@@ -746,6 +755,28 @@ internal open class UniffiVTableCallbackInterfaceFfiRemoteKv(
     }
 
 }
+@Structure.FieldOrder("read", "write", "delete", "uniffiFree")
+internal open class UniffiVTableCallbackInterfaceFfiRepoFiles(
+    @JvmField internal var `read`: UniffiCallbackInterfaceFfiRepoFilesMethod0? = null,
+    @JvmField internal var `write`: UniffiCallbackInterfaceFfiRepoFilesMethod1? = null,
+    @JvmField internal var `delete`: UniffiCallbackInterfaceFfiRepoFilesMethod2? = null,
+    @JvmField internal var `uniffiFree`: UniffiCallbackInterfaceFree? = null,
+) : Structure() {
+    class UniffiByValue(
+        `read`: UniffiCallbackInterfaceFfiRepoFilesMethod0? = null,
+        `write`: UniffiCallbackInterfaceFfiRepoFilesMethod1? = null,
+        `delete`: UniffiCallbackInterfaceFfiRepoFilesMethod2? = null,
+        `uniffiFree`: UniffiCallbackInterfaceFree? = null,
+    ): UniffiVTableCallbackInterfaceFfiRepoFiles(`read`,`write`,`delete`,`uniffiFree`,), Structure.ByValue
+
+   internal fun uniffiSetValue(other: UniffiVTableCallbackInterfaceFfiRepoFiles) {
+        `read` = other.`read`
+        `write` = other.`write`
+        `delete` = other.`delete`
+        `uniffiFree` = other.`uniffiFree`
+    }
+
+}
 @Structure.FieldOrder("writeText", "writeBinary", "remove", "uniffiFree")
 internal open class UniffiVTableCallbackInterfaceFfiRestoreSink(
     @JvmField internal var `writeText`: UniffiCallbackInterfaceFfiRestoreSinkMethod0? = null,
@@ -790,6 +821,10 @@ internal open class UniffiVTableCallbackInterfaceFfiVaultSource(
     }
 
 }
+
+
+
+
 
 
 
@@ -947,6 +982,12 @@ fun uniffi_tresse_ffi_checksum_method_ffiremotekv_put(
 ): Short
 fun uniffi_tresse_ffi_checksum_method_ffiremotekv_delete(
 ): Short
+fun uniffi_tresse_ffi_checksum_method_ffirepofiles_read(
+): Short
+fun uniffi_tresse_ffi_checksum_method_ffirepofiles_write(
+): Short
+fun uniffi_tresse_ffi_checksum_method_ffirepofiles_delete(
+): Short
 fun uniffi_tresse_ffi_checksum_method_ffirestoresink_write_text(
 ): Short
 fun uniffi_tresse_ffi_checksum_method_ffirestoresink_write_binary(
@@ -999,6 +1040,7 @@ internal interface UniffiLib : Library {
             // we already did that with `IntegrityCheckingUniffiLib` above.
             uniffiCallbackInterfaceFfiObjectStore.register(lib)
             uniffiCallbackInterfaceFfiRemoteKv.register(lib)
+            uniffiCallbackInterfaceFfiRepoFiles.register(lib)
             uniffiCallbackInterfaceFfiRestoreSink.register(lib)
             uniffiCallbackInterfaceFfiVaultSource.register(lib)
             // Loading of library with integrity check done.
@@ -1026,15 +1068,17 @@ fun uniffi_tresse_ffi_fn_init_callback_vtable_ffiobjectstore(`vtable`: UniffiVTa
 ): Unit
 fun uniffi_tresse_ffi_fn_init_callback_vtable_ffiremotekv(`vtable`: UniffiVTableCallbackInterfaceFfiRemoteKv,
 ): Unit
+fun uniffi_tresse_ffi_fn_init_callback_vtable_ffirepofiles(`vtable`: UniffiVTableCallbackInterfaceFfiRepoFiles,
+): Unit
 fun uniffi_tresse_ffi_fn_init_callback_vtable_ffirestoresink(`vtable`: UniffiVTableCallbackInterfaceFfiRestoreSink,
 ): Unit
 fun uniffi_tresse_ffi_fn_init_callback_vtable_ffivaultsource(`vtable`: UniffiVTableCallbackInterfaceFfiVaultSource,
 ): Unit
-fun uniffi_tresse_ffi_fn_func_cas_sync(`encryptionKeyB64`: RustBuffer.ByValue,`fileIndexJson`: RustBuffer.ByValue,`local`: Long,`remote`: Long,`source`: Long,`sink`: Long,uniffi_out_err: UniffiRustCallStatus, 
+fun uniffi_tresse_ffi_fn_func_cas_sync(`encryptionKeyB64`: RustBuffer.ByValue,`fileIndexJson`: RustBuffer.ByValue,`local`: Long,`remote`: Long,`source`: Long,`sink`: Long,`repo`: Long,uniffi_out_err: UniffiRustCallStatus, 
 ): RustBuffer.ByValue
 fun uniffi_tresse_ffi_fn_func_file_index_path(uniffi_out_err: UniffiRustCallStatus, 
 ): RustBuffer.ByValue
-fun uniffi_tresse_ffi_fn_func_force_pull(`encryptionKeyB64`: RustBuffer.ByValue,`local`: Long,`remote`: Long,`source`: Long,`sink`: Long,uniffi_out_err: UniffiRustCallStatus, 
+fun uniffi_tresse_ffi_fn_func_force_pull(`encryptionKeyB64`: RustBuffer.ByValue,`local`: Long,`remote`: Long,`source`: Long,`sink`: Long,`repo`: Long,uniffi_out_err: UniffiRustCallStatus, 
 ): RustBuffer.ByValue
 fun uniffi_tresse_ffi_fn_func_generate_key(uniffi_out_err: UniffiRustCallStatus, 
 ): RustBuffer.ByValue
@@ -1174,13 +1218,13 @@ private fun uniffiCheckContractApiVersion(lib: IntegrityCheckingUniffiLib) {
 }
 @Suppress("UNUSED_PARAMETER")
 private fun uniffiCheckApiChecksums(lib: IntegrityCheckingUniffiLib) {
-    if (lib.uniffi_tresse_ffi_checksum_func_cas_sync() != 44339.toShort()) {
+    if (lib.uniffi_tresse_ffi_checksum_func_cas_sync() != 34775.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_tresse_ffi_checksum_func_file_index_path() != 39068.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_tresse_ffi_checksum_func_force_pull() != 12734.toShort()) {
+    if (lib.uniffi_tresse_ffi_checksum_func_force_pull() != 57415.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_tresse_ffi_checksum_func_generate_key() != 19531.toShort()) {
@@ -1198,7 +1242,7 @@ private fun uniffiCheckApiChecksums(lib: IntegrityCheckingUniffiLib) {
     if (lib.uniffi_tresse_ffi_checksum_func_supported_languages() != 36076.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_tresse_ffi_checksum_func_to_jdr() != 47824.toShort()) {
+    if (lib.uniffi_tresse_ffi_checksum_func_to_jdr() != 21858.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_tresse_ffi_checksum_method_ffiignorerules_is_ignored() != 15922.toShort()) {
@@ -1232,6 +1276,15 @@ private fun uniffiCheckApiChecksums(lib: IntegrityCheckingUniffiLib) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_tresse_ffi_checksum_method_ffiremotekv_delete() != 58354.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_tresse_ffi_checksum_method_ffirepofiles_read() != 30624.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_tresse_ffi_checksum_method_ffirepofiles_write() != 30231.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_tresse_ffi_checksum_method_ffirepofiles_delete() != 38398.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if (lib.uniffi_tresse_ffi_checksum_method_ffirestoresink_write_text() != 14694.toShort()) {
@@ -1960,6 +2013,11 @@ data class FfiSyncOutcome (
      */
     var `removed`: kotlin.UInt, 
     /**
+     * Files restore left alone because they changed since the last sync: their
+     * content is in no version, so overwriting or deleting them would lose it.
+     */
+    var `kept`: kotlin.UInt, 
+    /**
      * Updated local-only file-index payload; store it at [`file_index_path`].
      */
     var `fileIndexJson`: kotlin.String
@@ -1980,6 +2038,7 @@ public object FfiConverterTypeFfiSyncOutcome: FfiConverterRustBuffer<FfiSyncOutc
             FfiConverterUInt.read(buf),
             FfiConverterUInt.read(buf),
             FfiConverterUInt.read(buf),
+            FfiConverterUInt.read(buf),
             FfiConverterString.read(buf),
         )
     }
@@ -1991,6 +2050,7 @@ public object FfiConverterTypeFfiSyncOutcome: FfiConverterRustBuffer<FfiSyncOutc
             FfiConverterUInt.allocationSize(value.`pulled`) +
             FfiConverterUInt.allocationSize(value.`restored`) +
             FfiConverterUInt.allocationSize(value.`removed`) +
+            FfiConverterUInt.allocationSize(value.`kept`) +
             FfiConverterString.allocationSize(value.`fileIndexJson`)
     )
 
@@ -2001,6 +2061,7 @@ public object FfiConverterTypeFfiSyncOutcome: FfiConverterRustBuffer<FfiSyncOutc
             FfiConverterUInt.write(value.`pulled`, buf)
             FfiConverterUInt.write(value.`restored`, buf)
             FfiConverterUInt.write(value.`removed`, buf)
+            FfiConverterUInt.write(value.`kept`, buf)
             FfiConverterString.write(value.`fileIndexJson`, buf)
     }
 }
@@ -2386,6 +2447,117 @@ public object FfiConverterTypeFfiRemoteKv: FfiConverterCallbackInterface<FfiRemo
 
 
 /**
+ * Служебные файлы репозитория внутри `.tresse/` (Kotlin: хранилище vault).
+ *
+ * Пути — относительно корня vault, с `/`; их объявляет домен. Запись должна
+ * заменять файл целиком.
+ */
+public interface FfiRepoFiles {
+    
+    /**
+     * Содержимое файла или `None`, если его нет.
+     */
+    fun `read`(`path`: kotlin.String): kotlin.ByteArray?
+    
+    fun `write`(`path`: kotlin.String, `bytes`: kotlin.ByteArray)
+    
+    /**
+     * Удаление идемпотентно: отсутствующий файл не ошибка.
+     */
+    fun `delete`(`path`: kotlin.String)
+    
+    companion object
+}
+
+
+
+// Put the implementation in an object so we don't pollute the top-level namespace
+internal object uniffiCallbackInterfaceFfiRepoFiles {
+    internal object `read`: UniffiCallbackInterfaceFfiRepoFilesMethod0 {
+        override fun callback(`uniffiHandle`: Long,`path`: RustBuffer.ByValue,`uniffiOutReturn`: RustBuffer,uniffiCallStatus: UniffiRustCallStatus,) {
+            val uniffiObj = FfiConverterTypeFfiRepoFiles.handleMap.get(uniffiHandle)
+            val makeCall = { ->
+                uniffiObj.`read`(
+                    FfiConverterString.lift(`path`),
+                )
+            }
+            val writeReturn = { value: kotlin.ByteArray? -> uniffiOutReturn.setValue(FfiConverterOptionalByteArray.lower(value)) }
+            uniffiTraitInterfaceCallWithError(
+                uniffiCallStatus,
+                makeCall,
+                writeReturn,
+                { e: TresseException -> FfiConverterTypeTresseError.lower(e) }
+            )
+        }
+    }
+    internal object `write`: UniffiCallbackInterfaceFfiRepoFilesMethod1 {
+        override fun callback(`uniffiHandle`: Long,`path`: RustBuffer.ByValue,`bytes`: RustBuffer.ByValue,`uniffiOutReturn`: Pointer,uniffiCallStatus: UniffiRustCallStatus,) {
+            val uniffiObj = FfiConverterTypeFfiRepoFiles.handleMap.get(uniffiHandle)
+            val makeCall = { ->
+                uniffiObj.`write`(
+                    FfiConverterString.lift(`path`),
+                    FfiConverterByteArray.lift(`bytes`),
+                )
+            }
+            val writeReturn = { _: Unit -> Unit }
+            uniffiTraitInterfaceCallWithError(
+                uniffiCallStatus,
+                makeCall,
+                writeReturn,
+                { e: TresseException -> FfiConverterTypeTresseError.lower(e) }
+            )
+        }
+    }
+    internal object `delete`: UniffiCallbackInterfaceFfiRepoFilesMethod2 {
+        override fun callback(`uniffiHandle`: Long,`path`: RustBuffer.ByValue,`uniffiOutReturn`: Pointer,uniffiCallStatus: UniffiRustCallStatus,) {
+            val uniffiObj = FfiConverterTypeFfiRepoFiles.handleMap.get(uniffiHandle)
+            val makeCall = { ->
+                uniffiObj.`delete`(
+                    FfiConverterString.lift(`path`),
+                )
+            }
+            val writeReturn = { _: Unit -> Unit }
+            uniffiTraitInterfaceCallWithError(
+                uniffiCallStatus,
+                makeCall,
+                writeReturn,
+                { e: TresseException -> FfiConverterTypeTresseError.lower(e) }
+            )
+        }
+    }
+
+    internal object uniffiFree: UniffiCallbackInterfaceFree {
+        override fun callback(handle: Long) {
+            FfiConverterTypeFfiRepoFiles.handleMap.remove(handle)
+        }
+    }
+
+    internal var vtable = UniffiVTableCallbackInterfaceFfiRepoFiles.UniffiByValue(
+        `read`,
+        `write`,
+        `delete`,
+        uniffiFree,
+    )
+
+    // Registers the foreign callback with the Rust side.
+    // This method is generated for each callback interface.
+    internal fun register(lib: UniffiLib) {
+        lib.uniffi_tresse_ffi_fn_init_callback_vtable_ffirepofiles(vtable)
+    }
+}
+
+/**
+ * The ffiConverter which transforms the Callbacks in to handles to pass to Rust.
+ *
+ * @suppress
+ */
+public object FfiConverterTypeFfiRepoFiles: FfiConverterCallbackInterface<FfiRepoFiles>()
+
+
+
+
+
+/**
  * Write side of the vault for restore (Kotlin: SAF `VaultStorage`).
  */
 public interface FfiRestoreSink {
@@ -2758,12 +2930,19 @@ public object FfiConverterSequenceTypeFfiVaultFile: FfiConverterRustBuffer<List<
          * - `encryption_key_b64`: base64 32-byte repository key (same key as the plugin).
          * - `local`: the vault's own plaintext local CAS (`.tresse/{meta,content}` via SAF).
          * - `remote` / `source` / `sink`: Kotlin-provided remote KV and vault I/O.
+         * - `repo`: the lock and operation record inside `.tresse/`.
+         *
+         * Вызов берёт блокировку репозитория, сначала переливает в vault то, что
+         * осталось за прежней операцией (оборванной здесь, в плагине или в CLI), и
+         * ведёт запись своей: упади он на полпути, следующая операция доведёт vault по
+         * ней. Без этого скачанная, но не перелитая мета читалась бы следующим
+         * коммитом как удаление файлов.
          */
-    @Throws(TresseException::class) fun `casSync`(`encryptionKeyB64`: kotlin.String, `fileIndexJson`: kotlin.String?, `local`: FfiObjectStore, `remote`: FfiRemoteKv, `source`: FfiVaultSource, `sink`: FfiRestoreSink): FfiSyncOutcome {
+    @Throws(TresseException::class) fun `casSync`(`encryptionKeyB64`: kotlin.String, `fileIndexJson`: kotlin.String?, `local`: FfiObjectStore, `remote`: FfiRemoteKv, `source`: FfiVaultSource, `sink`: FfiRestoreSink, `repo`: FfiRepoFiles): FfiSyncOutcome {
             return FfiConverterTypeFfiSyncOutcome.lift(
     uniffiRustCallWithError(TresseException) { _status ->
     UniffiLib.INSTANCE.uniffi_tresse_ffi_fn_func_cas_sync(
-        FfiConverterString.lower(`encryptionKeyB64`),FfiConverterOptionalString.lower(`fileIndexJson`),FfiConverterTypeFfiObjectStore.lower(`local`),FfiConverterTypeFfiRemoteKv.lower(`remote`),FfiConverterTypeFfiVaultSource.lower(`source`),FfiConverterTypeFfiRestoreSink.lower(`sink`),_status)
+        FfiConverterString.lower(`encryptionKeyB64`),FfiConverterOptionalString.lower(`fileIndexJson`),FfiConverterTypeFfiObjectStore.lower(`local`),FfiConverterTypeFfiRemoteKv.lower(`remote`),FfiConverterTypeFfiVaultSource.lower(`source`),FfiConverterTypeFfiRestoreSink.lower(`sink`),FfiConverterTypeFfiRepoFiles.lower(`repo`),_status)
 }
     )
     }
@@ -2792,12 +2971,16 @@ public object FfiConverterSequenceTypeFfiVaultFile: FfiConverterRustBuffer<List<
          * local `.tresse`, missing content needed by the fetched latest tree is pulled,
          * and then the vault is restored. No local snapshot is committed and nothing is
          * pushed to the remote.
+         *
+         * Restore здесь без охраны: «remote побеждает» и есть просьба пользователя.
+         * Долг прежней операции вызов забирает в свою запись и переливает вместе со
+         * своим.
          */
-    @Throws(TresseException::class) fun `forcePull`(`encryptionKeyB64`: kotlin.String, `local`: FfiObjectStore, `remote`: FfiRemoteKv, `source`: FfiVaultSource, `sink`: FfiRestoreSink): FfiSyncOutcome {
+    @Throws(TresseException::class) fun `forcePull`(`encryptionKeyB64`: kotlin.String, `local`: FfiObjectStore, `remote`: FfiRemoteKv, `source`: FfiVaultSource, `sink`: FfiRestoreSink, `repo`: FfiRepoFiles): FfiSyncOutcome {
             return FfiConverterTypeFfiSyncOutcome.lift(
     uniffiRustCallWithError(TresseException) { _status ->
     UniffiLib.INSTANCE.uniffi_tresse_ffi_fn_func_force_pull(
-        FfiConverterString.lower(`encryptionKeyB64`),FfiConverterTypeFfiObjectStore.lower(`local`),FfiConverterTypeFfiRemoteKv.lower(`remote`),FfiConverterTypeFfiVaultSource.lower(`source`),FfiConverterTypeFfiRestoreSink.lower(`sink`),_status)
+        FfiConverterString.lower(`encryptionKeyB64`),FfiConverterTypeFfiObjectStore.lower(`local`),FfiConverterTypeFfiRemoteKv.lower(`remote`),FfiConverterTypeFfiVaultSource.lower(`source`),FfiConverterTypeFfiRestoreSink.lower(`sink`),FfiConverterTypeFfiRepoFiles.lower(`repo`),_status)
 }
     )
     }
@@ -2865,9 +3048,6 @@ public object FfiConverterSequenceTypeFfiVaultFile: FfiConverterRustBuffer<List<
     }
     
 
-        /**
-         * Render binary RDX bytes as a JDR text string (for debugging / inspection).
-         */
     @Throws(TresseException::class) fun `toJdr`(`bytes`: kotlin.ByteArray): kotlin.String {
             return FfiConverterString.lift(
     uniffiRustCallWithError(TresseException) { _status ->

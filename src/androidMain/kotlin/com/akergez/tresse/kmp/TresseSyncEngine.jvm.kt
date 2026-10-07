@@ -2,6 +2,7 @@ package com.akergez.tresse.kmp
 
 import uniffi.tresse_ffi.FfiObjectStore
 import uniffi.tresse_ffi.FfiRemoteKv
+import uniffi.tresse_ffi.FfiRepoFiles
 import uniffi.tresse_ffi.FfiRestoreSink
 import uniffi.tresse_ffi.FfiVaultFile
 import uniffi.tresse_ffi.FfiVaultSource
@@ -36,9 +37,13 @@ internal class VaultSource(
     private val ignore: TresseIgnore,
     private val progress: TresseSyncProgress?,
 ) : FfiVaultSource {
-    private val files by lazy { vault.listFiles() }
+    // Список снимается заново при каждом запросе движка, а не один раз на вызов:
+    // движок переспрашивает его после того, как сам записал файлы в vault, и по
+    // старому списку принял бы только что восстановленное за удалённое.
+    private var files: List<TresseFile> = emptyList()
 
     override fun listFiles(): List<FfiVaultFile> = try {
+        files = vault.listFiles()
         files.asSequence()
             // The list is flat — every entry is a file. The matcher walks each path's
             // own ancestors, so an excluded directory takes its subtree with it.
@@ -168,6 +173,31 @@ internal class VaultObjectStore(private val vault: TresseVault) : FfiObjectStore
         vault.storeDelete(".tresse/$`class`/$id")
     } catch (error: Throwable) {
         throw TresseException.General("deleting .tresse/$`class`/$id failed: ${error.message}")
+    }
+}
+
+/**
+ * Служебные файлы репозитория — блокировка и запись операции в `.tresse/`. Пути
+ * объявляет домен; хост только читает и пишет их там же, где лежит локальный CAS,
+ * чтобы CLI и плагин Obsidian на этом же vault видели те же файлы.
+ */
+internal class VaultRepoFiles(private val vault: TresseVault) : FfiRepoFiles {
+    override fun read(path: String): ByteArray? = try {
+        vault.storeRead(path)
+    } catch (error: Throwable) {
+        throw TresseException.General("reading $path failed: ${error.message}")
+    }
+
+    override fun write(path: String, bytes: ByteArray) = try {
+        vault.storeWrite(path, bytes)
+    } catch (error: Throwable) {
+        throw TresseException.General("writing $path failed: ${error.message}")
+    }
+
+    override fun delete(path: String) = try {
+        vault.storeDelete(path)
+    } catch (error: Throwable) {
+        throw TresseException.General("deleting $path failed: ${error.message}")
     }
 }
 

@@ -23,6 +23,7 @@ actual class TresseSync actual constructor(private val vault: TresseVault) {
                         remote = CountingRemoteKv(remoteKvOf(config), progress),
                         source = VaultSource(vault, ignore, progress),
                         sink = VaultSink(vault, ignore, progress),
+                        repo = VaultRepoFiles(vault),
                     )
                 }
                 local.writeIndex(outcome.fileIndexJson)
@@ -48,6 +49,7 @@ actual class TresseSync actual constructor(private val vault: TresseVault) {
                         remote = CountingRemoteKv(remoteKvOf(config), progress),
                         source = VaultSource(vault, ignore, progress),
                         sink = VaultSink(vault, ignore, progress),
+                        repo = VaultRepoFiles(vault),
                     )
                 }
                 local.writeIndex(outcome.fileIndexJson)
