@@ -17,7 +17,7 @@ env:
   CARGO_XWIN_VERSION: "0.23.0"
   CARGO_NDK_VERSION: "4.1.2"
   TRESSE_REPOSITORY_URL: "https://gitlab.com/ragusseven/tresse.git"
-  TRESSE_REF: "04a68edc19e9212ff4311a54f80a115b6a7423ff"
+  TRESSE_REF: "1aa23437ef4229f941812d080fe5d8417e3bb3cb"
 
 defaults:
   run:
